@@ -1,8 +1,9 @@
 package com.sapient.model.dao;
 
-import com.sapient.model.beans.UsersTest;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sapient.model.beans.User;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<UsersTest, Integer> {
+@Repository
+public interface UserRepository extends CrudRepository<User, Integer> {
 }

@@ -1,0 +1,58 @@
+# This is just a sample schema.
+
+type User {
+    username: String
+    email: String
+}
+
+type Query {
+    user(username: String!, password: String!): User!
+}
+
+type Mutation {
+    createUser(username: String!, password: String!, email: String!): CreateUserPayload!
+    deleteUser(username: String!, password: String!): DeleteUserPayload!
+}
+
+## Using union types are a best practice because they allow you to send separate success and failure payloads and
+## because adding fields to either payload will always be backwards compatible.
+##
+## Consuming union types from the client-side will look something like this:
+##
+## mutation {
+##   createUser(username: "hark", password: "pwd", email: "hsk@gmail.com") {
+##     ...on CreateUserSuccess {
+##       user {
+##         username
+##         email
+##       }
+##     }
+##
+##     ...on CreateUserFailed {
+##       exceptionName
+##       errorMessage
+##     }
+##   }
+## }
+
+union CreateUserPayload = CreateUserSuccess | CreateUserFailed
+
+type CreateUserSuccess {
+    user: User!
+}
+
+type CreateUserFailed {
+    exceptionName: String
+    errorMessage: String
+}
+
+union DeleteUserPayload = DeleteUserSuccess | DeleteUserFailed
+
+type DeleteUserSuccess {
+    user: User!
+}
+
+type DeleteUserFailed {
+    exceptionName: String
+    errorMessage: String
+}
