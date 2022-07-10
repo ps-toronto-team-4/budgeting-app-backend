@@ -1,5 +1,8 @@
 # budgeting-app-backend
 
+## Dev requirements
+JDK 17 is required. If you are using IntelliJ, you can download it under project settings.
+
 ## Dev setup
 You need postgres running on port 5432.
 Make the password for the default user "admin123".
