@@ -1,5 +1,6 @@
 package com.sapient.controller;
 
+import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.model.beans.User;
 import com.sapient.controller.record.FailurePayload;
 import com.sapient.model.service.UserService;
@@ -13,7 +14,7 @@ import java.util.Optional;
 @Controller
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @QueryMapping
     public String greeting() {
@@ -58,13 +59,11 @@ public class UserController {
         }
     }
 
-    record DeleteUserSuccess(String successMessage) {}
-
     @MutationMapping
     public Record deleteUser(@Argument String passwordHash) {
         try {
             userService.deleteUser(passwordHash);
-            return new DeleteUserSuccess("Successfully deleted user!");
+            return new DeleteSuccess("Successfully deleted user!");
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }
