@@ -13,7 +13,7 @@ public class UserService {
     private UserRepository userDao;
 
     public User createUser(String username, String password, String email) throws UsernameAlreadyTakenException {
-        if (userExists(username)) {
+        if (usernameTaken(username)) {
             throw new UsernameAlreadyTakenException();
         }
         User user = new User();
@@ -24,30 +24,48 @@ public class UserService {
         return user;
     }
 
-    public User deleteUser(String username, String password) throws UserNotFoundException {
-        if (!userExists(username)) {
-            throw new UserNotFoundException();
-        }
-        User user = getUser(username);
-        userDao.delete(user);
-        return user;
-    }
-
-    public User getUser(String username) throws UserNotFoundException {
-        for (User user : userDao.findAll()) {
-            if (user.getUsername().equals(username)) {
-                return user;
+    public void deleteUser(String passwordHash) throws UserNotFoundException {
+        for(User user: userDao.findAll()){
+            if(user.getPasswordHash().equals(passwordHash)){
+                userDao.delete(user);
+                return;
             }
         }
         throw new UserNotFoundException();
     }
 
-    public boolean userExists(String username) {
-        try {
-            getUser(username);
+    public User getUser(Integer id) throws UserNotFoundException {
+        User user = userDao.findById(id).orElse(null);
+        if(user==null){
+            throw new UserNotFoundException();
+        }
+        return user;
+    }
+
+    public Boolean userExists(Integer id){
+        try{
+            userDao.findById(id);
             return true;
-        } catch (Exception e) {
+        }catch(Exception e){
             return false;
         }
+    }
+
+    public Boolean usernameTaken(String username) {
+        for(User user: userDao.findAll()){
+            if(username.equals(user.getUsername())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public User getUserByPasswordHash(String passwordHash) throws UserNotFoundException{
+        for(User user:userDao.findAll()){
+            if(user.getPasswordHash().equals(passwordHash)){
+                return user;
+            }
+        }
+        throw new UserNotFoundException();
     }
 }

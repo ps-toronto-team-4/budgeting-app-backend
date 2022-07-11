@@ -1,58 +1,55 @@
-# This is just a sample schema.
-
 type User {
     username: String
     email: String
 }
 
+type Category {
+    id: Int
+    name: String
+    colourHex: String
+    description: String
+}
+
 type Query {
-    user(username: String!, password: String!): User!
+    greeting: String!
+    category(passwordHash: String!, id: Int!): CategoryPayload!
+    categories(passwordHash: String!): CategoriesPayload!
 }
 
 type Mutation {
     createUser(username: String!, password: String!, email: String!): CreateUserPayload!
-    deleteUser(username: String!, password: String!): DeleteUserPayload!
+    deleteUser(passwordHash: String!): DeleteUserPayload!
+    createCategory(passwordHash: String!, name: String!, colourHex: String!, description: String): CategoryPayload!
+    deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
 }
 
-## Using union types are a best practice because they allow you to send separate success and failure payloads and
-## because adding fields to either payload will always be backwards compatible.
-##
-## Consuming union types from the client-side will look something like this:
-##
-## mutation {
-##   createUser(username: "hark", password: "pwd", email: "hsk@gmail.com") {
-##     ...on CreateUserSuccess {
-##       user {
-##         username
-##         email
-##       }
-##     }
-##
-##     ...on CreateUserFailed {
-##       exceptionName
-##       errorMessage
-##     }
-##   }
-## }
+type FailurePayload {
+    exceptionName: String
+    errorMessage: String
+}
 
-union CreateUserPayload = CreateUserSuccess | CreateUserFailed
+type DeleteSuccess {
+    successMessage: String
+}
+
+union CreateUserPayload = CreateUserSuccess | FailurePayload
 
 type CreateUserSuccess {
     user: User!
 }
 
-type CreateUserFailed {
-    exceptionName: String
-    errorMessage: String
+union DeleteUserPayload = DeleteSuccess | FailurePayload
+
+union CategoryPayload = CategorySuccess | FailurePayload
+
+type CategorySuccess {
+    category: Category!
 }
 
-union DeleteUserPayload = DeleteUserSuccess | DeleteUserFailed
+union CategoriesPayload = CategoriesSuccess | FailurePayload
 
-type DeleteUserSuccess {
-    user: User!
+type CategoriesSuccess {
+    categories: [Category]!
 }
 
-type DeleteUserFailed {
-    exceptionName: String
-    errorMessage: String
-}
+union DeleteCategoryPayload = DeleteSuccess | FailurePayload
