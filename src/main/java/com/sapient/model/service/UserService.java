@@ -59,4 +59,13 @@ public class UserService {
         }
         return false;
     }
+
+    public User getUserByPasswordHash(String passwordHash) throws UserNotFoundException{
+        for(User user:userDao.findAll()){
+            if(user.getPasswordHash().equals(passwordHash)){
+                return user;
+            }
+        }
+        throw new UserNotFoundException();
+    }
 }
