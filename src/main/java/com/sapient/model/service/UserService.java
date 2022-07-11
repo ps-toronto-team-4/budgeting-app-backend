@@ -30,13 +30,20 @@ public class UserService {
         }
         User user = new User();
         user.setUsername(username);
-        user.setPasswordHash(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
+        user.setPasswordHash(hashPassword(username, password));
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPhoneNumber(phoneNumber);
         userDao.save(user);
         return user;
+    }
+
+    // For now, we generate the hash by concatenating the username and password.
+    // This is bad practice.
+    private String hashPassword(String username, String password) {
+        String concat = username + password;
+        return BCrypt.withDefaults().hashToString(12, concat.toCharArray());
     }
 
     public void deleteUser(String passwordHash) throws UserNotFoundException {
