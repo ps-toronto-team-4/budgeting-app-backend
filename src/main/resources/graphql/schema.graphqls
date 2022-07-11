@@ -1,6 +1,9 @@
 type User {
-    username: String
-    email: String
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: String
 }
 
 type Category {
@@ -14,10 +17,17 @@ type Query {
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
+    user(username: String!): User ## Helper for testing.
 }
 
 type Mutation {
-    createUser(username: String!, password: String!, email: String!): CreateUserPayload!
+    signUp(
+        username: String!,
+        password: String!,
+        email: String!,
+        firstName: String!,
+        lastName: String!,
+        phoneNumber: String): CreateUserPayload!
     deleteUser(passwordHash: String!): DeleteUserPayload!
     createCategory(passwordHash: String!, name: String!, colourHex: String!, description: String): CategoryPayload!
     deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
