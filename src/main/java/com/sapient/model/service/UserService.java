@@ -1,11 +1,13 @@
 package com.sapient.model.service;
 
+import com.sapient.exception.EmailAlreadyTakenException;
 import com.sapient.exception.UserNotFoundException;
 import com.sapient.exception.UsernameAlreadyTakenException;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.util.Optional;
 
@@ -20,13 +22,17 @@ public class UserService {
             String email,
             String firstName,
             String lastName,
-            Optional<String> phoneNumber) throws UsernameAlreadyTakenException {
+            Optional<String> phoneNumber)
+            throws UsernameAlreadyTakenException, EmailAlreadyTakenException {
         if (usernameTaken(username)) {
             throw new UsernameAlreadyTakenException();
         }
+        if (emailTaken(email)) {
+            throw new EmailAlreadyTakenException("Email '" + email + "' is already taken.");
+        }
         User user = new User();
         user.setUsername(username);
-        user.setPasswordHash(password);
+        user.setPasswordHash(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -67,6 +73,15 @@ public class UserService {
     public Boolean usernameTaken(String username) {
         for(User user: userDao.findAll()){
             if(username.equals(user.getUsername())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean emailTaken(String email) {
+        for (User user : userDao.findAll()) {
+            if (email.equals(user.getEmail())) {
                 return true;
             }
         }
