@@ -1,11 +1,16 @@
 package com.sapient.model.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sapient.exception.MerchantNotFoundException;
 import com.sapient.exception.NotAuthorizedException;
+import com.sapient.exception.UserNotFoundException;
 import com.sapient.model.beans.Merchant;
+import com.sapient.model.beans.User;
 import com.sapient.model.dao.MerchantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class MerchantService {
@@ -51,7 +56,7 @@ public class MerchantService {
         return merchant;
     }
 
-    public List<Merchant> getMerchants(String passwordHash) {
+    public List<Merchant> getMerchants(String passwordHash) throws NotAuthorizedException {
         User user;
         try {
             user = userService.getUserByPasswordHash(passwordHash);
@@ -71,7 +76,7 @@ public class MerchantService {
 
     public Boolean merchantExists(Integer id) {
         Merchant merchant = merchantDao.findById(id).orElse(null);
-        return merchant ? true : false; 
+        return merchant==null;
     }
 
 }

@@ -76,6 +76,6 @@ public class CategoryService {
 
     public Boolean categoryExists(Integer id) {
         Category category = categoryDao.findById(id).orElse(null);
-        return category ? true : false;
+        return category == null;
     }
 }

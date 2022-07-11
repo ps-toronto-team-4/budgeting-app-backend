@@ -37,7 +37,7 @@ public class Merchant {
         return defaultCategoryId;
     }
 
-    public Integer setDefaultCategoryId(Integer defaultCategoryId) {
+    public void setDefaultCategoryId(Integer defaultCategoryId) {
         this.defaultCategoryId = defaultCategoryId;
     }
 
