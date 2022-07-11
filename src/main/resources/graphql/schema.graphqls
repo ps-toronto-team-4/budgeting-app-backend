@@ -7,11 +7,13 @@ type User {
 
 type Query {
     user(username: String!, password: String!): User!
+    expense(id: Int!): CreateExpensePayload!
 }
 
 type Mutation {
     createUser(username: String!, password: String!, email: String!): CreateUserPayload!
     deleteUser(username: String!, password: String!): DeleteUserPayload!
+    createExpense(title: String!, description: String!, amount: Float!): CreateExpensePayload!
 }
 
 ## Using union types are a best practice because they allow you to send separate success and failure payloads and
@@ -56,3 +58,29 @@ type DeleteUserFailed {
     exceptionName: String
     errorMessage: String
 }
+
+
+
+
+## 
+## EXPENSE RELATED
+##
+
+type Expense {
+	amount: Float
+	title: String
+	description: String	
+}
+
+union CreateExpensePayload = CreateExpenseSuccess | CreateExpenseFailed 
+
+type CreateExpenseSuccess {
+    expense: Expense!
+}
+
+type CreateExpenseFailed {
+    exceptionName: String
+    errorMessage: String
+}
+
+
