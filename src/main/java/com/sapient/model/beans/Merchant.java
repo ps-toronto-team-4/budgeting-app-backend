@@ -10,7 +10,7 @@ public class Merchant {
     private Integer id;
     private String name;
     private String description;
-    private String defaultCategoryId;
+    private Integer defaultCategoryId;
     private Integer userId;
 
     public Integer getId() {
@@ -33,11 +33,11 @@ public class Merchant {
         this.description = description;
     }
 
-    public String getDefaultCategoryId() {
+    public Integer getDefaultCategoryId() {
         return defaultCategoryId;
     }
 
-    public void setDefaultCategoryId(String defaultCategoryId) {
+    public Integer setDefaultCategoryId(Integer defaultCategoryId) {
         this.defaultCategoryId = defaultCategoryId;
     }
 
