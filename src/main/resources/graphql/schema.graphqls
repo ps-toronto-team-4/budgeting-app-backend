@@ -1,16 +1,26 @@
 # This is just a sample schema.
 
 type User {
-    username: String
-    email: String
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: String
 }
 
 type Query {
     greeting: String!
+    user(username: String!): User ## Helper for testing.
 }
 
 type Mutation {
-    createUser(username: String!, password: String!, email: String!): CreateUserPayload!
+    signUp(
+        username: String!,
+        password: String!,
+        email: String!,
+        firstName: String!,
+        lastName: String!,
+        phoneNumber: String): CreateUserPayload!
     deleteUser(passwordHash: String!): DeleteUserPayload!
 }
 

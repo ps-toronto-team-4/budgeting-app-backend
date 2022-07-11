@@ -7,12 +7,20 @@ import com.sapient.model.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     @Autowired
     private UserRepository userDao;
 
-    public User createUser(String username, String password, String email) throws UsernameAlreadyTakenException {
+    public User createUser(
+            String username,
+            String password,
+            String email,
+            String firstName,
+            String lastName,
+            Optional<String> phoneNumber) throws UsernameAlreadyTakenException {
         if (usernameTaken(username)) {
             throw new UsernameAlreadyTakenException();
         }
@@ -20,6 +28,11 @@ public class UserService {
         user.setUsername(username);
         user.setPasswordHash(password);
         user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        try {
+            user.setPhoneNumber(phoneNumber.get());
+        } catch (Exception e) {}
         userDao.save(user);
         return user;
     }
@@ -58,5 +71,14 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public User getByUsername(String username) throws UserNotFoundException {
+        for (User user : userDao.findAll()) {
+            if (username.equals(user.getUsername())) {
+                return user;
+            }
+        }
+        throw new UserNotFoundException();
     }
 }
