@@ -51,7 +51,7 @@ public class UserController {
                     email,
                     firstName,
                     lastName,
-                    Optional.ofNullable(phoneNumber)
+                    phoneNumber
                 )
             );
         } catch (Exception e) {

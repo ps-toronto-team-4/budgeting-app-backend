@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
-import java.util.Optional;
-
 @Service
 public class UserService {
     @Autowired
@@ -22,7 +20,7 @@ public class UserService {
             String email,
             String firstName,
             String lastName,
-            Optional<String> phoneNumber)
+            String phoneNumber)
             throws UsernameAlreadyTakenException, EmailAlreadyTakenException {
         if (usernameTaken(username)) {
             throw new UsernameAlreadyTakenException();
@@ -36,9 +34,7 @@ public class UserService {
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        try {
-            user.setPhoneNumber(phoneNumber.get());
-        } catch (Exception e) {}
+        user.setPhoneNumber(phoneNumber);
         userDao.save(user);
         return user;
     }
