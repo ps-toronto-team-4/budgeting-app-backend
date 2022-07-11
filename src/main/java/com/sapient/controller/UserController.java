@@ -13,7 +13,12 @@ import org.springframework.stereotype.Controller;
 public class UserController {
     @Autowired
     UserService userService;
-    
+
+    @QueryMapping
+    public String greeting() {
+        return "Hello world from graphql endpoint!";
+    }
+
     // Object names map to graphql types of the same name. Eg: "CreateUserFailed".
     record CreateUserSuccess(User user) {}
 

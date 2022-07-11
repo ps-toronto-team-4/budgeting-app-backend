@@ -5,6 +5,10 @@ type User {
     email: String
 }
 
+type Query {
+    greeting: String!
+}
+
 type Mutation {
     createUser(username: String!, password: String!, email: String!): CreateUserPayload!
     deleteUser(passwordHash: String!): DeleteUserPayload!
