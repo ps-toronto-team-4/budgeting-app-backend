@@ -12,7 +12,7 @@ type Category {
 
 type Query {
     user(username: String!, password: String!): User!
-    expense(id: Int!): CreateExpensePayload!
+    expense(passwordHash: String!, id: Int!): CreateExpensePayload!
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
