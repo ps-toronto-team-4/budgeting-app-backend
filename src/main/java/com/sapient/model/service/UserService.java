@@ -3,11 +3,14 @@ package com.sapient.model.service;
 import com.sapient.exception.EmailAlreadyTakenException;
 import com.sapient.exception.UserNotFoundException;
 import com.sapient.exception.UsernameAlreadyTakenException;
+import com.sapient.exception.UsernameTooLongException;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
+
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class UserService {
@@ -21,7 +24,7 @@ public class UserService {
             String firstName,
             String lastName,
             String phoneNumber)
-            throws UsernameAlreadyTakenException, EmailAlreadyTakenException {
+            throws UsernameAlreadyTakenException, EmailAlreadyTakenException, UsernameTooLongException {
         if (usernameTaken(username)) {
             throw new UsernameAlreadyTakenException();
         }
@@ -39,11 +42,18 @@ public class UserService {
         return user;
     }
 
-    // For now, we generate the hash by concatenating the username and password.
-    // This is bad practice.
-    private String hashPassword(String username, String password) {
-        String concat = username + password;
-        return BCrypt.withDefaults().hashToString(12, concat.toCharArray());
+    // Hashes password and salts it with the username.
+    // Username must be less than or equal to 16 characters.
+    // Returned hash is in Modular Crypt Format.
+    private String hashPassword(String username, String password) throws UsernameTooLongException {
+        if (username.length() > 16) {
+            throw new UsernameTooLongException("Username too long to salt password. Length must be <= 16 characters.");
+        }
+        String salt = username + " ".repeat(16-username.length());
+        System.out.println("Length of salt is: " + salt.length());
+        byte[] hash = BCrypt.withDefaults().hash(6, salt.getBytes(StandardCharsets.UTF_8),
+                password.getBytes(StandardCharsets.UTF_8));
+        return new String(hash, StandardCharsets.UTF_8); // correct way to convert byte[] to String.
     }
 
     public void deleteUser(String passwordHash) throws UserNotFoundException {
