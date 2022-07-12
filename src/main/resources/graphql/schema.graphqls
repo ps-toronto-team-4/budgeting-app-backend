@@ -13,12 +13,22 @@ type Category {
     description: String
 }
 
+type Merchant {
+    id: Int
+    name: String
+    description: String
+    defaultCategory: Category
+}
+
 type Query {
+    expense(passwordHash: String!, id: Int!): CreateExpensePayload!
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
     user(username: String!): User ## Helper for testing.
     signIn(username: String!, password: String!): SignInPayload!
+    merchant(passwordHash: String!, id: Int!): MerchantPayload
+    merchants(passwordHash: String!): MerchantsPayload
 }
 
 type Mutation {
@@ -32,6 +42,9 @@ type Mutation {
     deleteUser(passwordHash: String!): DeleteUserPayload!
     createCategory(passwordHash: String!, name: String!, colourHex: String!, description: String): CategoryPayload!
     deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
+    createMerchant(passwordHash: String!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
+    deleteMerchant(passwordHash:String!, id:Int!): DeleteMerchantPayload!
+    createExpense(passwordHash: String!, title: String!, description: String, amount: Float!): CreateExpensePayload!
 }
 
 type FailurePayload {
@@ -70,4 +83,43 @@ type CategoriesSuccess {
     categories: [Category]!
 }
 
+type DeleteUserFailed {
+    exceptionName: String
+    errorMessage: String
+}
+
+
+
+
+## 
+## EXPENSE RELATED
+##
+
+type Expense {
+	amount: Float
+	title: String
+	description: String	
+}
+
+union CreateExpensePayload = ExpenseSuccess | FailurePayload 
+
+type ExpenseSuccess {
+    expense: Expense!
+}
+
+
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
+
+union MerchantPayload = MerchantSuccess | FailurePayload
+
+type MerchantSuccess {
+    merchant: Merchant!
+}
+
+union MerchantsPayload = MerchantsSuccess | FailurePayload
+
+type MerchantsSuccess {
+    merchants: [Merchant]!
+}
+
+union DeleteMerchantPayload = DeleteSuccess | FailurePayload

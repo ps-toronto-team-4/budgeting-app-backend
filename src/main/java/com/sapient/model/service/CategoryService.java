@@ -26,7 +26,7 @@ public class CategoryService {
         category.setColourHex(colourHex);
         category.setName(name);
         category.setDescription(description);
-        category.setUserId(user.getId());
+        category.setUser(user);
         categoryDao.save(category);
         return category;
     }
@@ -44,13 +44,7 @@ public class CategoryService {
         if(category==null){
             throw new CategoryNotFoundException();
         }
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException();
-        }
-        if(user.getId()!=category.getUserId()){
+        if(!category.getUser().getPasswordHash().equals(passwordHash)){
             throw new NotAuthorizedException();
         }
         return category;
@@ -67,7 +61,7 @@ public class CategoryService {
         List<Category> categories = new ArrayList<Category>();
 
         for(Category category: categoryDao.findAll()){
-            if(category.getUserId() == user.getId()){
+            if(category.getUser().getId() == user.getId()){
                 categories.add(category);
             }
         }
@@ -76,9 +70,6 @@ public class CategoryService {
 
     public Boolean categoryExists(Integer id) {
         Category category = categoryDao.findById(id).orElse(null);
-        if(category == null){
-            return false;
-        }
-        return true;
+        return category != null;
     }
 }
