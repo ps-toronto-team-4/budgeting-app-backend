@@ -10,10 +10,19 @@ type Category {
     description: String
 }
 
+type Merchant {
+    id: Int
+    name: String
+    description: String
+    defaultCategoryId: Int
+}
+
 type Query {
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
+    merchant(passwordHash: String!, id: Int!): MerchantPayload
+    merchants(passwordHash: String!): MerchantsPayload
 }
 
 type Mutation {
@@ -21,6 +30,8 @@ type Mutation {
     deleteUser(passwordHash: String!): DeleteUserPayload!
     createCategory(passwordHash: String!, name: String!, colourHex: String!, description: String): CategoryPayload!
     deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
+    createMerchant(passwordHash: String!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
+    deleteMerchant(passwordHash:String!, id:Int!): DeleteMerchantPayload!
 }
 
 type FailurePayload {
@@ -53,3 +64,17 @@ type CategoriesSuccess {
 }
 
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
+
+union MerchantPayload = MerchantSuccess | FailurePayload
+
+type MerchantSuccess {
+    category: Merchant!
+}
+
+union MerchantsPayload = MerchantsSuccess | FailurePayload
+
+type MerchantsSuccess {
+    merchants: [Merchant]!
+}
+
+union DeleteMerchantPayload = DeleteSuccess | FailurePayload
