@@ -50,7 +50,6 @@ public class UserService {
             throw new UsernameTooLongException("Username too long to salt password. Length must be <= 16 characters.");
         }
         String salt = username + " ".repeat(16-username.length());
-        System.out.println("Length of salt is: " + salt.length());
         byte[] hash = BCrypt.withDefaults().hash(6, salt.getBytes(StandardCharsets.UTF_8),
                 password.getBytes(StandardCharsets.UTF_8));
         return new String(hash, StandardCharsets.UTF_8); // correct way to convert byte[] to String.
