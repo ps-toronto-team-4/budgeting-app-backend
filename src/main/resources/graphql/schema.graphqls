@@ -18,6 +18,7 @@ type Merchant {
 }
 
 type Query {
+    expense(passwordHash: String!, id: Int!): CreateExpensePayload!
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
@@ -32,6 +33,7 @@ type Mutation {
     deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
     createMerchant(passwordHash: String!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
     deleteMerchant(passwordHash:String!, id:Int!): DeleteMerchantPayload!
+    createExpense(passwordHash: String!, title: String!, description: String, amount: Float!): CreateExpensePayload!
 }
 
 type FailurePayload {
@@ -62,6 +64,31 @@ union CategoriesPayload = CategoriesSuccess | FailurePayload
 type CategoriesSuccess {
     categories: [Category]!
 }
+
+type DeleteUserFailed {
+    exceptionName: String
+    errorMessage: String
+}
+
+
+
+
+## 
+## EXPENSE RELATED
+##
+
+type Expense {
+	amount: Float
+	title: String
+	description: String	
+}
+
+union CreateExpensePayload = ExpenseSuccess | FailurePayload 
+
+type ExpenseSuccess {
+    expense: Expense!
+}
+
 
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 
