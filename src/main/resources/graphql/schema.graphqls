@@ -18,6 +18,7 @@ type Query {
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
     user(username: String!): User ## Helper for testing.
+    signIn(username: String!, password: String!): SignInPayload!
 }
 
 type Mutation {
@@ -47,6 +48,12 @@ union CreateUserPayload = CreateUserSuccess | FailurePayload
 type CreateUserSuccess {
     passwordHash: String!
     user: User!
+}
+
+union SignInPayload = SignInSuccess | FailurePayload
+
+type SignInSuccess {
+    passwordHash: String!
 }
 
 union DeleteUserPayload = DeleteSuccess | FailurePayload

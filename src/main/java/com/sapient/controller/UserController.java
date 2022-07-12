@@ -1,6 +1,7 @@
 package com.sapient.controller;
 
 import com.sapient.controller.record.DeleteSuccess;
+import com.sapient.exception.IncorrectPasswordException;
 import com.sapient.model.beans.User;
 import com.sapient.controller.record.FailurePayload;
 import com.sapient.model.service.UserService;
@@ -27,6 +28,23 @@ public class UserController {
             return userService.getByUsername(username);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    record SignInSuccess(String passwordHash) {}
+
+    @QueryMapping
+    public Record signIn(@Argument String username, @Argument String password) {
+        try {
+            User user = userService.getByUsername(username);
+            String passwordHash = user.getPasswordHash();
+            if (userService.verifyPasswordHash(username, password, passwordHash)) {
+                return new SignInSuccess(passwordHash);
+            } else {
+                throw new IncorrectPasswordException("Incorrect password for user '" + username + "' supplied.");
+            }
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }
     }
 
