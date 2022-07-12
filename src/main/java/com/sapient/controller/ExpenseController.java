@@ -46,7 +46,7 @@ public class ExpenseController {
     public Record deleteExpense(@Argument String passwordHash, @Argument Integer id) {
         try {
         	expenseService.deleteExpense(passwordHash,id);
-            return new DeleteSuccess("Success");
+            return new DeleteSuccess("Successfully deleted expense.");
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }
