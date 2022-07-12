@@ -17,9 +17,7 @@ public class ExpenseController {
     @Autowired
     ExpenseService expenseService;
     
- // Object names map to graphql types of the same name. Eg: "CreateUserFailed".
     record ExpenseSuccess(Expense expense) {}
-    record ExpenseFailed(String exceptionName, String errorMessage) {}
 
     @QueryMapping
     public Record expense(@Argument String passwordHash, @Argument Integer id) {
