@@ -40,7 +40,7 @@ pgAdmin will allow you to view and interact with the database from a web browser
 
 ```sh
 docker pull dpage/pgadmin4
-docker run -p 9091:80 -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com' -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret' -d dpage/pgadmin4
+docker run -p 9091:80 --name pgadmin -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com' -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret' -d dpage/pgadmin4
 ```
 
 Now, pgAdmin will be running locally on [port 9091](http://localhost:9091).
