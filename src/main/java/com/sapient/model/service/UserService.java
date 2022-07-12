@@ -43,16 +43,26 @@ public class UserService {
     }
 
     // Hashes password and salts it with the username.
-    // Username must be less than or equal to 16 characters.
     // Returned hash is in Modular Crypt Format.
     private String hashPassword(String username, String password) throws UsernameTooLongException {
-        if (username.length() > 16) {
-            throw new UsernameTooLongException("Username too long to salt password. Length must be <= 16 characters.");
-        }
-        String salt = username + " ".repeat(16-username.length());
+        String salt = this.genSalt(username);
         byte[] hash = BCrypt.withDefaults().hash(6, salt.getBytes(StandardCharsets.UTF_8),
                 password.getBytes(StandardCharsets.UTF_8));
         return new String(hash, StandardCharsets.UTF_8); // correct way to convert byte[] to String.
+    }
+
+    private boolean verifyPasswordHash(String username, String password, String passwordHash)
+            throws UsernameTooLongException {
+        String salt = this.genSalt(username);
+        return passwordHash.equals(hashPassword(username, password));
+    }
+
+    // Username must be <= 16 characters.
+    private String genSalt(String username) throws UsernameTooLongException {
+        if (username.length() > 16) {
+            throw new UsernameTooLongException("Username too long to salt password. Length must be <= 16 characters.");
+        }
+        return username + " ".repeat(16-username.length());
     }
 
     public void deleteUser(String passwordHash) throws UserNotFoundException {
