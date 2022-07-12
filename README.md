@@ -34,3 +34,21 @@ Type the following to list all relations (Tables):
 ```sh
 \dt
 ```
+## Setting Up pgAdmin
+
+pgAdmin will allow you to view and interact with the database from a web browser (similar to phpMyAdmin for MySQL). Setting this up is relatively simple, just run the following commands:
+
+```sh
+docker pull dpage/pgadmin4
+docker run -p 9091:80 --name pgadmin -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com' -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret' -d dpage/pgadmin4
+```
+
+Now, pgAdmin will be running locally on [port 9091](http://localhost:9091).
+
+The email is `user@domain.com` and the password is `SuperSecret`. When registering with the postgres database, you'll need to first find the ip address for the postgres-db container. Simply run the following and look for the IP_ADDRESS variable:
+
+```sh
+docker inspect postgres-db
+```
+
+Now, for the database, the user is `postgres`, the password is `admin123` and the ip address is what you noted above.

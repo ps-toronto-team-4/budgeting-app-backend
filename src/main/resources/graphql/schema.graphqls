@@ -1,6 +1,9 @@
 type User {
-    username: String
-    email: String
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: String
 }
 
 type Category {
@@ -22,12 +25,20 @@ type Query {
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
+    user(username: String!): User ## Helper for testing.
+    signIn(username: String!, password: String!): SignInPayload!
     merchant(passwordHash: String!, id: Int!): MerchantPayload
     merchants(passwordHash: String!): MerchantsPayload
 }
 
 type Mutation {
-    createUser(username: String!, password: String!, email: String!): CreateUserPayload!
+    signUp(
+        username: String!,
+        password: String!,
+        email: String!,
+        firstName: String!,
+        lastName: String!,
+        phoneNumber: String): CreateUserPayload!
     deleteUser(passwordHash: String!): DeleteUserPayload!
     createCategory(passwordHash: String!, name: String!, colourHex: String!, description: String): CategoryPayload!
     deleteCategory(passwordHash:String!, id:Int!): DeleteCategoryPayload!
@@ -48,7 +59,14 @@ type DeleteSuccess {
 union CreateUserPayload = CreateUserSuccess | FailurePayload
 
 type CreateUserSuccess {
+    passwordHash: String!
     user: User!
+}
+
+union SignInPayload = SignInSuccess | FailurePayload
+
+type SignInSuccess {
+    passwordHash: String!
 }
 
 union DeleteUserPayload = DeleteSuccess | FailurePayload
