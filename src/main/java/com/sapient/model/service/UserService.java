@@ -51,7 +51,7 @@ public class UserService {
         return new String(hash, StandardCharsets.UTF_8); // correct way to convert byte[] to String.
     }
 
-    private boolean verifyPasswordHash(String username, String password, String passwordHash)
+    public boolean verifyPasswordHash(String username, String password, String passwordHash)
             throws UsernameTooLongException {
         String salt = this.genSalt(username);
         return passwordHash.equals(hashPassword(username, password));
