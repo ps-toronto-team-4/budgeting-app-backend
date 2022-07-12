@@ -21,7 +21,7 @@ public class ExpenseService {
     private UserService userService;
 
     public Expense createExpense(String passwordHash, String title, String description, Double amount) throws NotAuthorizedException {
-    	User foundUser;
+		User foundUser;
 		try {
 			foundUser = userService.getUserByPasswordHash(passwordHash);
 		} catch (UserNotFoundException e) {
@@ -42,7 +42,7 @@ public class ExpenseService {
     	if(found == null) {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
-    	if(found.getUser().getPasswordHash() != passwordHash) {
+    	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
     		throw new NotAuthorizedException();
     	}
     	expenseDao.delete(found);
@@ -54,7 +54,7 @@ public class ExpenseService {
     	if(found == null) {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
-    	if(found.getUser().getPasswordHash() != passwordHash) {
+    	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
     		throw new NotAuthorizedException();
     	}
         return found;

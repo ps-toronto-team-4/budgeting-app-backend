@@ -29,8 +29,6 @@ public class ExpenseController {
     	}
     }
 
-    
-
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping
@@ -45,7 +43,7 @@ public class ExpenseController {
     @MutationMapping
     public Record deleteExpense(@Argument String passwordHash, @Argument Integer id) {
         try {
-        	expenseService.deleteExpense(passwordHash,id);
+            expenseService.deleteExpense(passwordHash,id);
             return new DeleteSuccess("Successfully deleted expense.");
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
