@@ -10,8 +10,11 @@ public class Merchant {
     private Integer id;
     private String name;
     private String description;
-    private Integer defaultCategoryId;
-    private Integer userId;
+    @ManyToOne
+    private Category defaultCategory;
+
+    @ManyToOne
+    private User user;
 
     public Integer getId() {
         return id;
@@ -33,19 +36,20 @@ public class Merchant {
         this.description = description;
     }
 
-    public Integer getDefaultCategoryId() {
-        return defaultCategoryId;
+
+    public Category getDefaultCategory() {
+        return defaultCategory;
     }
 
-    public void setDefaultCategoryId(Integer defaultCategoryId) {
-        this.defaultCategoryId = defaultCategoryId;
+    public void setDefaultCategory(Category defaultCategory) {
+        this.defaultCategory = defaultCategory;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

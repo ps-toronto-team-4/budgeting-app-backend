@@ -14,7 +14,7 @@ type Merchant {
     id: Int
     name: String
     description: String
-    defaultCategoryId: Int
+    defaultCategory: Category
 }
 
 type Query {
@@ -68,7 +68,7 @@ union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 union MerchantPayload = MerchantSuccess | FailurePayload
 
 type MerchantSuccess {
-    category: Merchant!
+    merchant: Merchant!
 }
 
 union MerchantsPayload = MerchantsSuccess | FailurePayload

@@ -10,7 +10,9 @@ public class Category {
     private String colourHex;
     private String name;
     private String description;
-    private Integer userId;
+
+    @ManyToOne
+    private User user;
 
     public Integer getId() {
         return id;
@@ -40,11 +42,11 @@ public class Category {
         this.description = description;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }
