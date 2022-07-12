@@ -31,7 +31,7 @@ public class UserController {
     }
 
     // Object names map to graphql types of the same name. Eg: "CreateUserFailed".
-    record CreateUserSuccess(User user) {}
+    record CreateUserSuccess(String passwordHash, User user) {}
 
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
@@ -44,16 +44,8 @@ public class UserController {
             @Argument String lastName,
             @Argument String phoneNumber) {
         try {
-            return new CreateUserSuccess(
-                userService.createUser(
-                    username,
-                    password,
-                    email,
-                    firstName,
-                    lastName,
-                    phoneNumber
-                )
-            );
+            User user = userService.createUser(username, password, email, firstName, lastName, phoneNumber);
+            return new CreateUserSuccess(user.getPasswordHash(), user);
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }
