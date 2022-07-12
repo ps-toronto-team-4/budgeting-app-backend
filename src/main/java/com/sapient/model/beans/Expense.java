@@ -17,6 +17,7 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Double amount;
+	@ManyToOne
     private Category category;
 //    private int merchantID;
     private Date date;
