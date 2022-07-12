@@ -1,29 +1,23 @@
 package com.sapient.model.beans;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "categories")
-public class Category {
+@Table(name = "merchants")
+public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String colourHex;
     private String name;
     private String description;
+    @ManyToOne
+    private Category defaultCategory;
 
     @ManyToOne
     private User user;
 
     public Integer getId() {
         return id;
-    }
-
-    public String getColourHex() {
-        return colourHex;
-    }
-
-    public void setColourHex(String colourHex) {
-        this.colourHex = colourHex;
     }
 
     public String getName() {
@@ -40,6 +34,15 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    public Category getDefaultCategory() {
+        return defaultCategory;
+    }
+
+    public void setDefaultCategory(Category defaultCategory) {
+        this.defaultCategory = defaultCategory;
     }
 
     public User getUser() {
