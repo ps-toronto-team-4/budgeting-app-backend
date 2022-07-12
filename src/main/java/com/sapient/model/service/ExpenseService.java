@@ -25,7 +25,9 @@ public class ExpenseService {
 	@Autowired
 	private CategoryService categoryService;
 
-    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
+    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date,
+								 Integer categoryId, Integer merchantId, Integer recurrenceId)
+			throws NotAuthorizedException, RecordNotFoundException {
 		User foundUser;
 		Category foundCategory;
 		try {
@@ -50,25 +52,26 @@ public class ExpenseService {
     	return expense;
     }
 
-	public Expense updateExpense(String passwordHash, Integer id, String title, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
-		User foundUser;
+	public Expense updateExpense(String passwordHash, Integer id, String title, String description, Double amount,
+								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
+			throws NotAuthorizedException, RecordNotFoundException {
 		Category foundCategory;
 		Expense expense = expenseDao.findById(id).orElse(null);
 		if(expense == null){
 			throw new RecordNotFoundException("Can not find Expense with ID of '"+id+"'");
 		}
 		if(!expense.getUser().getPasswordHash().equals(passwordHash)){
-			throw new NotAuthorizedException("Can not modify expense, doesn't not belong to you or aren't authenticated properly");
+			throw new NotAuthorizedException("Can not modify expense, doesn't not belong to you or aren't " +
+					"authenticated properly");
 		}
 		try {
-			foundUser = userService.getUserByPasswordHash(passwordHash);
 			foundCategory = categoryService.getCategory(passwordHash, categoryId);
-		} catch (UserNotFoundException | CategoryNotFoundException e) {
-			throw new RecordNotFoundException("Failed to find linked components or authentication to linked resources denied: " + e.getMessage());
+		} catch (CategoryNotFoundException e) {
+			throw new RecordNotFoundException("Failed to find linked components or authentication to linked " +
+					"resources denied: " + e.getMessage());
 		}
 
 		expense.setDate(date);
-		expense.setUser(foundUser);
 		expense.setTitle(title);
 		expense.setAmount(amount);
 		expense.setDescription(description);
@@ -78,7 +81,8 @@ public class ExpenseService {
 		return expense;
 	}
 
-    public Expense deleteExpense(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
+    public Expense deleteExpense(String passwordHash, Integer id)
+			throws RecordNotFoundException, NotAuthorizedException {
     	Expense found = expenseDao.findById(id).orElse(null);
     	if(found == null) {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
