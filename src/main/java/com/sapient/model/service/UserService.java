@@ -60,7 +60,7 @@ public class UserService {
     // Username must be <= 16 characters.
     private String genSalt(String username) throws UsernameTooLongException {
         if (username.length() > 16) {
-            throw new UsernameTooLongException("Username too long to salt password. Length must be <= 16 characters.");
+            throw new UsernameTooLongException("Username must be <= 16 characters.");
         }
         return username + " ".repeat(16-username.length());
     }
