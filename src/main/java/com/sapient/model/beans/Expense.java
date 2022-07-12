@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,26 +23,18 @@ public class Expense {
 //    private recuranceID;
     private String title;
     private String description;
-//    private int userID;
+    @ManyToOne
+    private User user;
     
-    public Expense() {
-    	super();
-    }
-    
-    public Expense(String title, String description, Double amount) {
-    	super();
-    	this.title = title;
-    	this.description = description;
-    	Date date = new Date(System.currentTimeMillis());
-    	this.date = date;
-    	this.amount = amount;
-    }
+    public void setUser(User user) {
+		this.user = user;
+	}
+    public User getUser() {
+		return user;
+	}
     
 	public Integer getId() {
 		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
 	}
 	public Double getAmount() {
 		return amount;
