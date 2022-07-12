@@ -26,7 +26,7 @@ public class UserService {
             String phoneNumber)
             throws UsernameAlreadyTakenException, EmailAlreadyTakenException, UsernameTooLongException {
         if (usernameTaken(username)) {
-            throw new UsernameAlreadyTakenException();
+            throw new UsernameAlreadyTakenException("Username '" + username + "' is already taken.");
         }
         if (emailTaken(email)) {
             throw new EmailAlreadyTakenException("Email '" + email + "' is already taken.");
