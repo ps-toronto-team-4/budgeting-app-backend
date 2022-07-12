@@ -12,6 +12,8 @@ import com.sapient.exception.RecordNotFoundException;
 import com.sapient.model.beans.Expense;
 import com.sapient.model.service.ExpenseService;
 
+import java.util.Date;
+
 @Controller
 public class ExpenseController {
     @Autowired
@@ -32,9 +34,25 @@ public class ExpenseController {
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping
-    public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description, @Argument Double amount) {
+    public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description,
+                                @Argument Double amount, @Argument Date date, @Argument Integer categoryId,
+                                @Argument Integer merchantId, @Argument Integer recurrenceId) {
         try {
-            return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount));
+            return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
+                    categoryId,merchantId,recurrenceId));
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @MutationMapping
+    public Record updateExpense(@Argument String passwordHash, @Argument Integer id, @Argument String title,
+                                @Argument String description, @Argument Double amount, @Argument Date date,
+                                @Argument Integer categoryId, @Argument Integer merchantId,
+                                @Argument Integer recurrenceId){
+        try {
+            return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
+                    categoryId,merchantId,recurrenceId));
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }

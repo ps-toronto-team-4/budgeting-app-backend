@@ -39,7 +39,7 @@ public class CategoryService {
         categoryDao.delete(category);
     }
 
-    public Category getCategory(String passwordHash, Integer id) throws CategoryNotFoundException, NotAuthorizedException {
+    public Category     getCategory(String passwordHash, Integer id) throws CategoryNotFoundException, NotAuthorizedException {
         Category category = categoryDao.findById(id).orElse(null);
         if(category==null){
             throw new CategoryNotFoundException();

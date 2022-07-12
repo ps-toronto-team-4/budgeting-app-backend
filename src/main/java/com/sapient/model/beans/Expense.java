@@ -17,11 +17,30 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Double amount;
-//    private int categoryID;
+	@ManyToOne
+    private Category category;
 //    private int merchantID;
     private Date date;
-//    private recuranceID;
-    private String title;
+	@ManyToOne
+    private Recurrence recurrence;
+
+	public Recurrence getRecurrence() {
+		return recurrence;
+	}
+
+	public void setRecurrence(Recurrence recurrence) {
+		this.recurrence = recurrence;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	private String title;
     private String description;
     @ManyToOne
     private User user;
