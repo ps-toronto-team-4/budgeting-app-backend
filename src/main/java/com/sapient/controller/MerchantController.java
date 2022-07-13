@@ -51,6 +51,15 @@ public class MerchantController {
     }
 
     @MutationMapping
+    public Record updateMerchant(@Argument String passwordHash, @Argument Integer id, @Argument String name, @Argument String description, @Argument Integer defaultCategoryId) {
+        try{
+            return new MerchantSuccess(merchantService.updateMerchant(passwordHash, id, name, description, defaultCategoryId));
+        }catch(Exception e){
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @MutationMapping
     public Record deleteMerchant(@Argument String passwordHash, @Argument Integer id){
         try{
             merchantService.deleteMerchant(passwordHash, id);

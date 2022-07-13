@@ -20,13 +20,34 @@ public class CategoryService {
     @Autowired
     private UserService userService;
 
-    public Category createCategory(String passwordHash, String name, String colourHex, String description) throws UserNotFoundException {
-        User user = userService.getUserByPasswordHash(passwordHash);
+    public Category createCategory(String passwordHash, String name, String colourHex, String description) throws NotAuthorizedException {
+        User user;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch (UserNotFoundException e){
+            throw new NotAuthorizedException("You are not authorized to create a category");
+        }
         Category category = new Category();
-        category.setColourHex(colourHex);
         category.setName(name);
+        category.setColourHex(colourHex);
         category.setDescription(description);
         category.setUser(user);
+        categoryDao.save(category);
+        return category;
+    }
+
+    public Category updateCategory(String passwordHash, Integer id, String name, String colourHex, String description) throws NotAuthorizedException {
+        User user;
+        Category category;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+            category = getCategory(passwordHash, id);
+        }catch (UserNotFoundException | CategoryNotFoundException e){
+            throw new NotAuthorizedException("You are not authorized to update this category");
+        }
+        category.setName(name);
+        category.setColourHex(colourHex);
+        category.setDescription(description);
         categoryDao.save(category);
         return category;
     }
@@ -39,7 +60,7 @@ public class CategoryService {
         categoryDao.delete(category);
     }
 
-    public Category     getCategory(String passwordHash, Integer id) throws CategoryNotFoundException, NotAuthorizedException {
+    public Category getCategory(String passwordHash, Integer id) throws CategoryNotFoundException, NotAuthorizedException {
         Category category = categoryDao.findById(id).orElse(null);
         if(category==null){
             throw new CategoryNotFoundException();
