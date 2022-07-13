@@ -49,6 +49,15 @@ public class CategoryController {
     }
 
     @MutationMapping
+    public Record updateCategory(@Argument String passwordHash, @Argument Integer id, @Argument String name, @Argument String colourHex, @Argument String description){
+        try{
+            return new CategorySuccess(categoryService.updateCategory(passwordHash, id, name, colourHex, description));
+        }catch(Exception e){
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @MutationMapping
     public Record deleteCategory(@Argument String passwordHash, @Argument Integer id){
         try{
             categoryService.deleteCategory(passwordHash, id);
