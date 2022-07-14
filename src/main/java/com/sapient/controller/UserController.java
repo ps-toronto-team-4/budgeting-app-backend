@@ -4,6 +4,7 @@ import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.exception.IncorrectPasswordException;
 import com.sapient.model.beans.User;
 import com.sapient.controller.record.FailurePayload;
+import com.sapient.model.service.DefaultCategoryService;
 import com.sapient.model.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -16,6 +17,9 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DefaultCategoryService defaultCategoryService;
 
     @QueryMapping
     public String greeting() {
@@ -63,6 +67,7 @@ public class UserController {
             @Argument String phoneNumber) {
         try {
             User user = userService.createUser(username, password, email, firstName, lastName, phoneNumber);
+            defaultCategoryService.saveDefaultCategories(user);
             return new CreateUserSuccess(user.getPasswordHash(), user);
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());

@@ -4,6 +4,7 @@ import com.sapient.exception.CategoryNotFoundException;
 import com.sapient.exception.NotAuthorizedException;
 import com.sapient.exception.UserNotFoundException;
 import com.sapient.model.beans.Category;
+import com.sapient.model.beans.DefaultCategory;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +93,16 @@ public class CategoryService {
     public Boolean categoryExists(Integer id) {
         Category category = categoryDao.findById(id).orElse(null);
         return category != null;
+    }
+
+    public void createCategoryFromDefaultCategory(User user, DefaultCategory defaultCategory){
+        Category category = new Category();
+
+        category.setUser(user);
+        category.setName(defaultCategory.getName());
+        category.setDescription(defaultCategory.getDescription());
+        category.setColourHex(defaultCategory.getColourHex());
+
+        categoryDao.save(category);
     }
 }
