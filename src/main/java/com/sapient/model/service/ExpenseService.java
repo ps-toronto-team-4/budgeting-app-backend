@@ -1,11 +1,9 @@
 package com.sapient.model.service;
 
-import com.sapient.exception.CategoryNotFoundException;
-import com.sapient.exception.NotAuthorizedException;
-import com.sapient.exception.RecordNotFoundException;
-import com.sapient.exception.UserNotFoundException;
+import com.sapient.exception.*;
 import com.sapient.model.beans.Category;
 import com.sapient.model.beans.Expense;
+import com.sapient.model.beans.Merchant;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.ExpenseRepository;
 
@@ -25,18 +23,29 @@ public class ExpenseService {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Autowired
+	private MerchantService merchantService;
+
     public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date,
 								 Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
 		User foundUser;
-		Category foundCategory;
+		Category foundCategory = null;
+		Merchant foundMerchant = null;
 		try {
 			foundUser = userService.getUserByPasswordHash(passwordHash);
-			foundCategory = categoryService.getCategory(passwordHash, categoryId);
+			if(categoryId != null) {
+				foundCategory = categoryService.getCategory(passwordHash, categoryId);
+			}
+			if(merchantId != null) {
+				foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
+			}
 		} catch (UserNotFoundException e) {
 			throw new NotAuthorizedException("Not authorized: " + e.getMessage());
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Can't find category for '"+categoryId+"'");
+		} catch (MerchantNotFoundException e) {
+			throw new RecordNotFoundException("Can't find Merchnat for '"+merchantId+"'");
 		}
 		Expense expense = new Expense();
 		//TODO? do we want to auto add in the date to the current time?
@@ -47,7 +56,7 @@ public class ExpenseService {
     	expense.setAmount(amount);
     	expense.setDescription(description);
 		expense.setCategory(foundCategory);
-		//TODO merchant
+		expense.setMerchant(foundMerchant);
     	expenseDao.save(expense);
     	return expense;
     }

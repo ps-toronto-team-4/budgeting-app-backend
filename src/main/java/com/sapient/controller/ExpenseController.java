@@ -35,8 +35,15 @@ public class ExpenseController {
     // Eg: "exceptionName".
     @MutationMapping
     public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description,
-                                @Argument Double amount, @Argument Date date, @Argument Integer categoryId,
+                                @Argument Double amount, @Argument Integer epochDate, @Argument Integer categoryId,
                                 @Argument Integer merchantId, @Argument Integer recurrenceId) {
+
+        Date date;
+        if(epochDate == null){
+            date = null;
+        } else {
+            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        }
         try {
             return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));
@@ -47,9 +54,15 @@ public class ExpenseController {
 
     @MutationMapping
     public Record updateExpense(@Argument String passwordHash, @Argument Integer id, @Argument String title,
-                                @Argument String description, @Argument Double amount, @Argument Date date,
+                                @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
+        Date date;
+        if(epochDate == null){
+            date = null;
+        } else {
+            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        }
         try {
             return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));
