@@ -13,6 +13,7 @@ import com.sapient.model.beans.Expense;
 import com.sapient.model.service.ExpenseService;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class ExpenseController {
@@ -20,6 +21,7 @@ public class ExpenseController {
     ExpenseService expenseService;
     
     record ExpenseSuccess(Expense expense) {}
+    record ExpensesSuccess(List<Expense> expenses) {}
 
     @QueryMapping
     public Record expense(@Argument String passwordHash, @Argument Integer id) {
@@ -29,6 +31,16 @@ public class ExpenseController {
     	} catch (Exception e) {
     		return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
     	}
+    }
+
+    @QueryMapping
+    public Record expenses(@Argument String passwordHash) {
+        try {
+            List<Expense> found = expenseService.getExpenses(passwordHash);
+            return new ExpensesSuccess(found);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
     }
 
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.

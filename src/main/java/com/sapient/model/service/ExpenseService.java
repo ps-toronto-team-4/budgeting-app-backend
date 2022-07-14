@@ -7,7 +7,10 @@ import com.sapient.model.beans.Merchant;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.ExpenseRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +68,7 @@ public class ExpenseService {
 								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
 		Category foundCategory;
+		Merchant foundMerchant;
 		Expense expense = expenseDao.findById(id).orElse(null);
 		if(expense == null){
 			throw new RecordNotFoundException("Can not find Expense with ID of '"+id+"'");
@@ -75,9 +79,13 @@ public class ExpenseService {
 		}
 		try {
 			foundCategory = categoryService.getCategory(passwordHash, categoryId);
+			foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Failed to find linked components or authentication to linked " +
-					"resources denied: " + e.getMessage());
+					"resources (category) denied: " + e.getMessage());
+		} catch (MerchantNotFoundException e) {
+			throw new RecordNotFoundException("Failed to find linked components or authentication to linked " +
+					"resources (merchant) denied: " + e.getMessage());
 		}
 
 		expense.setDate(date);
@@ -85,7 +93,7 @@ public class ExpenseService {
 		expense.setAmount(amount);
 		expense.setDescription(description);
 		expense.setCategory(foundCategory);
-		//TODO merchant
+		expense.setMerchant(foundMerchant);
 		expenseDao.save(expense);
 		return expense;
 	}
@@ -113,6 +121,28 @@ public class ExpenseService {
     	}
         return found;
     }
+
+	public List<Expense> getExpenses(String passwordHash ) throws NotAuthorizedException {
+		User user;
+		try {
+			user = userService.getUserByPasswordHash(passwordHash);
+		}catch(Exception e){
+			throw new NotAuthorizedException();
+		}
+
+		List<Expense> foundAll = new ArrayList<Expense>();
+		expenseDao.findAll().forEach(expense -> foundAll.add(expense));
+		List<Expense> found = foundAll.stream().filter(
+				item -> {
+					if( item.getUser() == null) {
+						return false;
+					}else {
+						return item.getUser().getId() == user.getId();
+					}
+				})
+				.collect(Collectors.toList());
+		return found;
+	}
 
     public boolean expenseExists(String passwordHash, Integer id) {
         try {

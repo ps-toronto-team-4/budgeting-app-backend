@@ -22,6 +22,7 @@ type Merchant {
 
 type Query {
     expense(passwordHash: String!, id: Int!): ExpensePayload!
+    expenses(passwordHash: String!): ExpensesPayload!
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
@@ -91,13 +92,21 @@ union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 type Expense {
 	amount: Float
 	title: String
-	description: String	
+	description: String
+	user: User
+	category: Category
+	merchant: Merchant
 }
 
 union ExpensePayload = ExpenseSuccess | FailurePayload
+union ExpensesPayload = ExpensesSuccess | FailurePayload
 
 type ExpenseSuccess {
     expense: Expense!
+}
+
+type ExpensesSuccess {
+    expenses: [Expense]!
 }
 
 union MerchantPayload = MerchantSuccess | FailurePayload
