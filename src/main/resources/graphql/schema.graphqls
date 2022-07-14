@@ -48,7 +48,8 @@ type Mutation {
     updateMerchant(passwordHash: String!, id:Int!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
     deleteMerchant(passwordHash:String!, id:Int!): DeleteMerchantPayload!
     createExpense(passwordHash: String!, title: String!, description: String, amount: Float!, epochDate: Int, categoryId: Int, merchantId: Int): ExpensePayload!
-    deleteExpense(passwordHash: String!, title: String!, description: String, amount: Float!, epochDate: Int, categoryId: Int, merchantId: Int): ExpensePayload!
+    updateExpense(passwordHash: String!, id: Int!, title: String!, description: String, amount: Float!, epochDate: Int, categoryId: Int, merchantId: Int): ExpensePayload!
+    deleteExpense(passwordHash: String!, id: Int!): DeletePayload!
 }
 
 type FailurePayload {
@@ -90,6 +91,7 @@ type CategoriesSuccess {
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 
 type Expense {
+    id: Int
 	amount: Float
 	title: String
 	description: String
@@ -122,3 +124,5 @@ type MerchantsSuccess {
 }
 
 union DeleteMerchantPayload = DeleteSuccess | FailurePayload
+
+union DeletePayload = DeleteSuccess | FailurePayload
