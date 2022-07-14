@@ -19,7 +19,8 @@ public class Expense {
     private Double amount;
 	@ManyToOne
     private Category category;
-//    private int merchantID;
+	@ManyToOne
+    private Merchant merchant;
     private Date date;
 	@ManyToOne
     private Recurrence recurrence;
@@ -30,6 +31,14 @@ public class Expense {
 
 	public void setRecurrence(Recurrence recurrence) {
 		this.recurrence = recurrence;
+	}
+
+	public Merchant getMerchant() {
+		return merchant;
+	}
+
+	public void setMerchant(Merchant merchant) {
+		this.merchant = merchant;
 	}
 
 	public Category getCategory() {

@@ -13,6 +13,7 @@ import com.sapient.model.beans.Expense;
 import com.sapient.model.service.ExpenseService;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class ExpenseController {
@@ -20,6 +21,7 @@ public class ExpenseController {
     ExpenseService expenseService;
     
     record ExpenseSuccess(Expense expense) {}
+    record ExpensesSuccess(List<Expense> expenses) {}
 
     @QueryMapping
     public Record expense(@Argument String passwordHash, @Argument Integer id) {
@@ -31,12 +33,29 @@ public class ExpenseController {
     	}
     }
 
+    @QueryMapping
+    public Record expenses(@Argument String passwordHash) {
+        try {
+            List<Expense> found = expenseService.getExpenses(passwordHash);
+            return new ExpensesSuccess(found);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping
     public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description,
-                                @Argument Double amount, @Argument Date date, @Argument Integer categoryId,
+                                @Argument Double amount, @Argument Integer epochDate, @Argument Integer categoryId,
                                 @Argument Integer merchantId, @Argument Integer recurrenceId) {
+
+        Date date;
+        if(epochDate == null){
+            date = null;
+        } else {
+            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        }
         try {
             return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));
@@ -47,9 +66,15 @@ public class ExpenseController {
 
     @MutationMapping
     public Record updateExpense(@Argument String passwordHash, @Argument Integer id, @Argument String title,
-                                @Argument String description, @Argument Double amount, @Argument Date date,
+                                @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
+        Date date;
+        if(epochDate == null){
+            date = null;
+        } else {
+            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        }
         try {
             return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));
