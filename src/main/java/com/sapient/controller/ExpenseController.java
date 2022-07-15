@@ -50,12 +50,7 @@ public class ExpenseController {
                                 @Argument Double amount, @Argument Integer epochDate, @Argument Integer categoryId,
                                 @Argument Integer merchantId, @Argument Integer recurrenceId) {
 
-        Date date;
-        if(epochDate == null){
-            date = null;
-        } else {
-            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
-        }
+        Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
         try {
             return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));
@@ -69,12 +64,7 @@ public class ExpenseController {
                                 @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
-        Date date;
-        if(epochDate == null){
-            date = null;
-        } else {
-            date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
-        }
+        Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
         try {
             return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
                     categoryId,merchantId,recurrenceId));

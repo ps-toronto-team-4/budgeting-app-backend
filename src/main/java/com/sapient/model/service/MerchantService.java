@@ -25,7 +25,7 @@ public class MerchantService {
     @Autowired
     private CategoryService categoryService;
 
-    public Merchant createMerchant(String passwordHash, String name, String description, Integer defaultCategoryId) throws UserNotFoundException, NotAuthorizedException, CategoryNotFoundException {
+    public Merchant createMerchant(String passwordHash, String name, String description, Integer defaultCategoryId) throws NotAuthorizedException, CategoryNotFoundException {
         User user;
         try{
             user = userService.getUserByPasswordHash(passwordHash);

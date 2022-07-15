@@ -42,8 +42,15 @@ public class RecurrenceService {
 
     public Recurrence deleteRecurrence(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
 		Recurrence found = recurrenceDao.findById(id).orElse(null);
+
+		try{
+			userService.getUserByPasswordHash(passwordHash);
+		}catch (UserNotFoundException e){
+			throw new NotAuthorizedException("Invalid passwordHash");
+		}
+
     	if(found == null) {
-    		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
+    		throw new RecordNotFoundException("Unable to find recurrence with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
     		throw new NotAuthorizedException();
@@ -54,11 +61,18 @@ public class RecurrenceService {
 
     public Recurrence getExpense(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
 		Recurrence found = recurrenceDao.findById(id).orElse(null);
+
+		try{
+			userService.getUserByPasswordHash(passwordHash);
+		}catch(UserNotFoundException e){
+			throw new NotAuthorizedException("Invalid passwordHash");
+		}
+
     	if(found == null) {
-    		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
+    		throw new RecordNotFoundException("Unable to find Recurrence with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
-    		throw new NotAuthorizedException();
+    		throw new NotAuthorizedException("You are not authorized to retrieve this Recurrence");
     	}
         return found;
     }
