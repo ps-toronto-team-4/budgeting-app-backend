@@ -47,8 +47,8 @@ type Mutation {
     createMerchant(passwordHash: String!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
     updateMerchant(passwordHash: String!, id:Int!, name: String!, description: String, defaultCategoryId: Int): MerchantPayload!
     deleteMerchant(passwordHash:String!, id:Int!): DeleteMerchantPayload!
-    createExpense(passwordHash: String!, title: String!, description: String, amount: Float!, epochDate: Int, categoryId: Int, merchantId: Int): ExpensePayload!
-    updateExpense(passwordHash: String!, id: Int!, title: String!, description: String, amount: Float!, epochDate: Int, categoryId: Int, merchantId: Int): ExpensePayload!
+    createExpense(passwordHash: String!, title: String!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
+    updateExpense(passwordHash: String!, id: Int!, title: String!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
     deleteExpense(passwordHash: String!, id: Int!): DeletePayload!
 }
 

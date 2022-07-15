@@ -29,9 +29,7 @@ public class ExpenseService {
 	@Autowired
 	private MerchantService merchantService;
 
-    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date,
-								 Integer categoryId, Integer merchantId, Integer recurrenceId)
-			throws NotAuthorizedException, RecordNotFoundException {
+    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
 		User foundUser;
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
@@ -48,7 +46,7 @@ public class ExpenseService {
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Can't find category for '"+categoryId+"'");
 		} catch (MerchantNotFoundException e) {
-			throw new RecordNotFoundException("Can't find Merchnat for '"+merchantId+"'");
+			throw new RecordNotFoundException("Can't find Merchant for '"+merchantId+"'");
 		}
 		Expense expense = new Expense();
 		//TODO? do we want to auto add in the date to the current time?

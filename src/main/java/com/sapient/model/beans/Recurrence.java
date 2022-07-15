@@ -1,13 +1,11 @@
 package com.sapient.model.beans;
 
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "recurrences")
 public class Recurrence {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,6 +18,9 @@ public class Recurrence {
     //    private recuranceID;
     private String title;
     private String description;
+
+    @ManyToOne
+    private User user;
 
     public Integer getId() {
         return id;
@@ -65,16 +66,11 @@ public class Recurrence {
         this.description = description;
     }
 
-    @ManyToOne
-    private User user;
-
     public void setUser(User user) {
         this.user = user;
     }
     public User getUser() {
         return user;
     }
-
-
 
 }
