@@ -1,9 +1,9 @@
 package com.sapient.model.dao;
 
-import com.sapient.model.beans.User;
+import com.sapient.model.beans.Expense;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface ExpenseRepository extends CrudRepository<Expense, Integer> {
 }
