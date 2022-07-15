@@ -7,6 +7,7 @@ import com.sapient.exception.CategoryNotFoundException;
 import com.sapient.exception.MerchantNotFoundException;
 import com.sapient.exception.NotAuthorizedException;
 import com.sapient.exception.UserNotFoundException;
+import com.sapient.model.beans.Category;
 import com.sapient.model.beans.Merchant;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.MerchantRepository;
@@ -24,9 +25,31 @@ public class MerchantService {
     @Autowired
     private CategoryService categoryService;
 
-    public Merchant createMerchant(String passwordHash, String name, String description, Integer defaultCategoryId) throws UserNotFoundException, NotAuthorizedException, CategoryNotFoundException {
-        User user = userService.getUserByPasswordHash(passwordHash);
+    public Merchant createMerchant(String passwordHash, String name, String description, Integer defaultCategoryId) throws NotAuthorizedException, CategoryNotFoundException {
+        User user;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch(UserNotFoundException e){
+            throw new NotAuthorizedException("You are not authorized to create a merchant");
+        }
         Merchant merchant = new Merchant();
+        merchant.setName(name);
+        merchant.setDescription(description);
+        merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
+        merchant.setUser(user);
+        merchantDao.save(merchant);
+        return merchant;
+    }
+
+    public Merchant updateMerchant(String passwordHash, Integer id, String name, String description, Integer defaultCategoryId) throws NotAuthorizedException, CategoryNotFoundException {
+        User user;
+        Merchant merchant;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+            merchant = getMerchant(passwordHash, id);
+        }catch (UserNotFoundException | MerchantNotFoundException e){
+            throw new NotAuthorizedException("You are not authorized to update this category");
+        }
         merchant.setName(name);
         merchant.setDescription(description);
         merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
