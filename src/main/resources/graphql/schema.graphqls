@@ -95,6 +95,7 @@ type Expense {
 	amount: Float
 	title: String
 	description: String
+    date: String
 	user: User
 	category: Category
 	merchant: Merchant
