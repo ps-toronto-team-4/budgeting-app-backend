@@ -7,15 +7,15 @@ type User {
 }
 
 type Category {
-    id: Int
-    name: String
-    colourHex: String
+    id: Int!
+    name: String!
+    colourHex: String!
     description: String
 }
 
 type Merchant {
-    id: Int
-    name: String
+    id: Int!
+    name: String!
     description: String
     defaultCategory: Category
 }
@@ -91,11 +91,11 @@ type CategoriesSuccess {
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 
 type Expense {
-    id: Int
-	amount: Float
+    id: Int!
+	amount: Float!
 	description: String
-    date: String
-	user: User
+    date: String!
+	user: User!
 	category: Category
 	merchant: Merchant
 }
