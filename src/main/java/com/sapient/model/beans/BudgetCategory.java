@@ -17,6 +17,9 @@ public class BudgetCategory {
     @ManyToOne
     private Category category;
 
+    @ManyToOne
+    private User user;
+
     public Integer getId() {
         return id;
     }
@@ -43,5 +46,13 @@ public class BudgetCategory {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

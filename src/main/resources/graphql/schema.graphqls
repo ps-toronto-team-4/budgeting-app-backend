@@ -28,8 +28,37 @@ type Query {
     categories(passwordHash: String!): CategoriesPayload!
     user(username: String!): User ## Helper for testing.
     signIn(username: String!, password: String!): SignInPayload!
-    merchant(passwordHash: String!, id: Int!): MerchantPayload
-    merchants(passwordHash: String!): MerchantsPayload
+    merchant(passwordHash: String!, id: Int!): MerchantPayload!
+    merchants(passwordHash: String!): MerchantsPayload!
+    budget(passwordHash:String!, id: Int!): BudgetPayload!
+    budgets(passwordHash:String!): BudgetsPayload!
+    budgetCategory(passwordHash:String!, id:Int!): BudgetCategoryPayload!
+    budgetCategories(passwordHash:String!, budgetId:Int!): BudgetCategoriesPayload!
+}
+
+type Expense {
+    id: Int!
+    amount: Float!
+    description: String
+    date: String!
+    user: User!
+    category: Category
+    merchant: Merchant
+}
+
+type Budget {
+    id: Int!
+    month: Int!
+    year: Int!
+    user: User!
+}
+
+type BudgetCategory {
+    id: Int!
+    budget: Budget!
+    category: Category!
+    amount: Float!
+    user: User!
 }
 
 type Mutation {
@@ -50,6 +79,11 @@ type Mutation {
     createExpense(passwordHash: String!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
     updateExpense(passwordHash: String!, id: Int!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
     deleteExpense(passwordHash: String!, id: Int!): DeletePayload!
+    createBudget(passwordHash:String!, month:Int!, year:Int!): BudgetPayload!
+    deleteBudget(passwordHash: String!, id: Int!): DeletePayload!
+    createBudgetCategory(passwordHash: String!, amount: Float!, categoryId: Int, budgetId: Int): BudgetCategoryPayload!
+    updateBudgetCategory(passwordHash: String!, id:Int!, amount: Float!): BudgetCategoryPayload!
+    deleteBudgetCategory(passwordHash: String!, id: Int!): DeletePayload!
 }
 
 type FailurePayload {
@@ -90,16 +124,6 @@ type CategoriesSuccess {
 
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
 
-type Expense {
-    id: Int
-	amount: Float
-	description: String
-    date: String
-	user: User
-	category: Category
-	merchant: Merchant
-}
-
 union ExpensePayload = ExpenseSuccess | FailurePayload
 union ExpensesPayload = ExpensesSuccess | FailurePayload
 
@@ -126,3 +150,27 @@ type MerchantsSuccess {
 union DeleteMerchantPayload = DeleteSuccess | FailurePayload
 
 union DeletePayload = DeleteSuccess | FailurePayload
+
+union BudgetPayload = BudgetSuccess | FailurePayload
+
+type BudgetSuccess {
+    budget: Budget!
+}
+
+union BudgetsPayload = BudgetsSuccess | FailurePayload
+
+type BudgetsSuccess {
+    budgets: [Budget!]!
+}
+
+union BudgetCategoryPayload = BudgetCategorySuccess | FailurePayload
+
+type BudgetCategorySuccess {
+    budgetCategory: BudgetCategory!
+}
+
+union BudgetCategoriesPayload = BudgetCategoriesSuccess | FailurePayload
+
+type BudgetCategoriesSuccess {
+    budgetCategories: [BudgetCategory!]!
+}
