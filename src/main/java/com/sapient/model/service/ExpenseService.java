@@ -29,7 +29,7 @@ public class ExpenseService {
 	@Autowired
 	private MerchantService merchantService;
 
-    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
+    public Expense createExpense(String passwordHash, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
 		User foundUser;
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
@@ -53,7 +53,7 @@ public class ExpenseService {
 //		expense.setDate( new Date(System.currentTimeMillis()) );
 		expense.setDate(date);
         expense.setUser(foundUser);
-    	expense.setTitle(title);
+//    	expense.setTitle(title);
     	expense.setAmount(amount);
     	expense.setDescription(description);
 		expense.setCategory(foundCategory);
@@ -62,7 +62,7 @@ public class ExpenseService {
     	return expense;
     }
 
-	public Expense updateExpense(String passwordHash, Integer id, String title, String description, Double amount,
+	public Expense updateExpense(String passwordHash, Integer id, String description, Double amount,
 								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
 		Category foundCategory;
@@ -87,7 +87,7 @@ public class ExpenseService {
 		}
 
 		expense.setDate(date);
-		expense.setTitle(title);
+//		expense.setTitle(title);
 		expense.setAmount(amount);
 		expense.setDescription(description);
 		expense.setCategory(foundCategory);
