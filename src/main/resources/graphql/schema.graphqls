@@ -85,7 +85,7 @@ type CategorySuccess {
 union CategoriesPayload = CategoriesSuccess | FailurePayload
 
 type CategoriesSuccess {
-    categories: [Category]!
+    categories: [Category!]!
 }
 
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
