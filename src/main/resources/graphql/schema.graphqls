@@ -28,8 +28,8 @@ type Query {
     categories(passwordHash: String!): CategoriesPayload!
     user(username: String!): User ## Helper for testing.
     signIn(username: String!, password: String!): SignInPayload!
-    merchant(passwordHash: String!, id: Int!): MerchantPayload
-    merchants(passwordHash: String!): MerchantsPayload
+    merchant(passwordHash: String!, id: Int!): MerchantPayload!
+    merchants(passwordHash: String!): MerchantsPayload!
 }
 
 type Mutation {
@@ -120,7 +120,7 @@ type MerchantSuccess {
 union MerchantsPayload = MerchantsSuccess | FailurePayload
 
 type MerchantsSuccess {
-    merchants: [Merchant]!
+    merchants: [Merchant!]!
 }
 
 union DeleteMerchantPayload = DeleteSuccess | FailurePayload
