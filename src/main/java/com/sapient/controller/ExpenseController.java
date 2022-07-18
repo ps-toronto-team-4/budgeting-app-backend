@@ -46,13 +46,13 @@ public class ExpenseController {
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping
-    public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description,
+    public Record createExpense(@Argument String passwordHash, @Argument String description,
                                 @Argument Double amount, @Argument Integer epochDate, @Argument Integer categoryId,
                                 @Argument Integer merchantId, @Argument Integer recurrenceId) {
 
         Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
         try {
-            return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
+            return new ExpenseSuccess(expenseService.createExpense(passwordHash,description,amount,date,
                     categoryId,merchantId,recurrenceId));
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
@@ -60,13 +60,13 @@ public class ExpenseController {
     }
 
     @MutationMapping
-    public Record updateExpense(@Argument String passwordHash, @Argument Integer id, @Argument String title,
+    public Record updateExpense(@Argument String passwordHash, @Argument Integer id,
                                 @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
         Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
         try {
-            return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
+            return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,description,amount,date,
                     categoryId,merchantId,recurrenceId));
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
