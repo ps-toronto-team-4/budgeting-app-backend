@@ -35,7 +35,11 @@ public class MerchantService {
         Merchant merchant = new Merchant();
         merchant.setName(name);
         merchant.setDescription(description);
-        merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
+        if(defaultCategoryId == null){
+            merchant.setDefaultCategory(null)
+        }else{
+            merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
+        }
         merchant.setUser(user);
         merchantDao.save(merchant);
         return merchant;
@@ -52,7 +56,11 @@ public class MerchantService {
         }
         merchant.setName(name);
         merchant.setDescription(description);
-        merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
+        if(defaultCategoryId == null){
+            merchant.setDefaultCategory(null)
+        }else{
+            merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
+        }
         merchant.setUser(user);
         merchantDao.save(merchant);
         return merchant;
