@@ -4,6 +4,11 @@ type User {
     firstName: String!
     lastName: String!
     phoneNumber: String
+    categories: [Category!]
+    merchants: [Merchant!]
+    expenses: [Expense!]
+    budgets: [Budget!]
+    budgetCategories: [BudgetCategory!]
 }
 
 type Category {
@@ -11,6 +16,8 @@ type Category {
     name: String
     colourHex: String
     description: String
+    expenses: [Expense!]
+    merchants: [Merchant!]
 }
 
 type Merchant {
@@ -18,6 +25,7 @@ type Merchant {
     name: String
     description: String
     defaultCategory: Category
+    expenses: [Expense!]
 }
 
 type Query {
@@ -31,9 +39,10 @@ type Query {
     merchant(passwordHash: String!, id: Int!): MerchantPayload!
     merchants(passwordHash: String!): MerchantsPayload!
     budget(passwordHash:String!, id: Int!): BudgetPayload!
+    budgetByDate(passwordHash:String!, month: Int!, year: Int!): BudgetPayload!
     budgets(passwordHash:String!): BudgetsPayload!
     budgetCategory(passwordHash:String!, id:Int!): BudgetCategoryPayload!
-    budgetCategories(passwordHash:String!, budgetId:Int!): BudgetCategoriesPayload!
+    budgetCategories(passwordHash:String!): BudgetCategoriesPayload!
 }
 
 type Expense {
@@ -51,6 +60,7 @@ type Budget {
     month: Int!
     year: Int!
     user: User!
+    budgetCategories: [BudgetCategory!]
 }
 
 type BudgetCategory {

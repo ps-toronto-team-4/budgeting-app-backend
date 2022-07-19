@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -125,6 +126,6 @@ public class UserService {
                 return user;
             }
         }
-        throw new UserNotFoundException();
+        throw new UserNotFoundException("Incorrect username '" + username + "' supplied.");
     }
 }

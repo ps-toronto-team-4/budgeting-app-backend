@@ -30,6 +30,15 @@ public class BudgetController {
         }
     }
 
+    @QueryMapping
+    public Record budgetByDate(@Argument String passwordHash, @Argument Integer month, @Argument Integer year){
+        try{
+            return new BudgetSuccess(budgetService.getBudgetByDate(passwordHash, month, year));
+        }catch(Exception e){
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
     record BudgetsSuccess(List<Budget> budgets) {}
 
     @QueryMapping

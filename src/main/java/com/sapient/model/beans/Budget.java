@@ -1,6 +1,7 @@
 package com.sapient.model.beans;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "budgets")
@@ -14,6 +15,8 @@ public class Budget {
     @ManyToOne
     private User user;
 
+    @OneToMany(mappedBy = "budget", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<BudgetCategory> budgetCategories;
     public Integer getId() {
         return id;
     }
@@ -40,5 +43,13 @@ public class Budget {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<BudgetCategory> getBudgetCategories() {
+        return budgetCategories;
+    }
+
+    public void setBudgetCategories(List<BudgetCategory> budgetCategories) {
+        this.budgetCategories = budgetCategories;
     }
 }

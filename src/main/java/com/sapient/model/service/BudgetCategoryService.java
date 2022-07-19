@@ -1,6 +1,7 @@
 package com.sapient.model.service;
 
 import com.sapient.exception.*;
+import com.sapient.model.beans.Budget;
 import com.sapient.model.beans.BudgetCategory;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.BudgetCategoryRepository;
@@ -32,7 +33,7 @@ public class BudgetCategoryService {
         try{
             user = userService.getUserByPasswordHash(passwordHash);
         }catch (UserNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to create a budget");
+            throw new NotAuthorizedException("You are not authorized to create a budgetCategory");
         }
 
         if(budgetCategoryTaken(categoryId, budgetId, user.getId())){
@@ -42,9 +43,12 @@ public class BudgetCategoryService {
 
         BudgetCategory budgetCategory = new BudgetCategory();
 
+        Budget budget = budgetService.getBudget(passwordHash, budgetId);
+
         budgetCategory.setCategory(categoryService.getCategory(passwordHash, categoryId));
-        budgetCategory.setBudget(budgetService.getBudget(passwordHash, budgetId));
+        budgetCategory.setBudget(budget);
         budgetCategory.setAmount(amount);
+        budgetCategory.setUser(user);
 
         budgetCategoryDao.save(budgetCategory);
         return budgetCategory;
@@ -84,7 +88,7 @@ public class BudgetCategoryService {
         return budgetCategory;
     }
 
-    public List<BudgetCategory> getBudgetCategories(String passwordHash, Integer budgetId) throws NotAuthorizedException {
+    public List<BudgetCategory> getBudgetCategories(String passwordHash) throws NotAuthorizedException {
         User user;
         try {
             user = userService.getUserByPasswordHash(passwordHash);
@@ -95,7 +99,7 @@ public class BudgetCategoryService {
         List<BudgetCategory> budgetCategories = new ArrayList<BudgetCategory>();
 
         for(BudgetCategory budgetCategory: budgetCategoryDao.findAll()){
-            if(budgetCategory.getUser().getId() == user.getId() && budgetCategory.getBudget().getId() == budgetId){
+            if(budgetCategory.getUser().getId() == user.getId()){
                 budgetCategories.add(budgetCategory);
             }
         }

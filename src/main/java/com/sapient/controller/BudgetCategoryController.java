@@ -33,9 +33,9 @@ public class BudgetCategoryController {
     record BudgetCategoriesSuccess(List<BudgetCategory> budgetCategories) {}
 
     @QueryMapping
-    public Record budgetCategories(@Argument String passwordHash, @Argument Integer budgetId){
+    public Record budgetCategories(@Argument String passwordHash){
         try{
-            return new BudgetCategoriesSuccess(budgetCategoryService.getBudgetCategories(passwordHash, budgetId));
+            return new BudgetCategoriesSuccess(budgetCategoryService.getBudgetCategories(passwordHash));
         }catch(Exception e){
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }

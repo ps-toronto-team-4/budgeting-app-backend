@@ -2,7 +2,6 @@ package com.sapient.model.service;
 
 import com.sapient.exception.*;
 import com.sapient.model.beans.Budget;
-import com.sapient.model.beans.Category;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +51,21 @@ public class BudgetService {
     public Budget getBudget(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
         Budget budget = budgetDao.findById(id).orElse(null);
         if(budget==null){
-            throw new RecordNotFoundException();
+            throw new RecordNotFoundException("Could not find the specified budget: " + id);
         }
         if(!budget.getUser().getPasswordHash().equals(passwordHash)){
             throw new NotAuthorizedException("You are not authorized to access this budget");
         }
         return budget;
+    }
+
+    public Budget getBudgetByDate(String passwordHash, Integer month, Integer year) throws RecordNotFoundException{
+        for(Budget budget:budgetDao.findAll()){
+            if(budget.getUser().getPasswordHash().equals(passwordHash) && budget.getMonth().equals(month) && budget.getYear().equals(year)){
+                return budget;
+            }
+        }
+        throw new RecordNotFoundException("Could not find the specified budget: " + year + "-" + month);
     }
 
     public List<Budget> getBudgets(String passwordHash) throws NotAuthorizedException {
@@ -80,7 +88,7 @@ public class BudgetService {
 
     public Boolean budgetTaken(Integer month, Integer year, Integer userId){
         for(Budget budget: budgetDao.findAll()){
-            if(budget.getMonth() == month && budget.getYear() == year && budget.getUser().getId() == userId){
+            if(budget.getMonth().equals(month) && budget.getYear().equals(year) && budget.getUser().getId().equals(userId)){
                 return true;
             }
         }
