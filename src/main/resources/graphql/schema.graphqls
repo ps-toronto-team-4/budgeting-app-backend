@@ -12,17 +12,17 @@ type User {
 }
 
 type Category {
-    id: Int
-    name: String
-    colourHex: String
+    id: Int!
+    name: String!
+    colourHex: String!
     description: String
     expenses: [Expense!]
     merchants: [Merchant!]
 }
 
 type Merchant {
-    id: Int
-    name: String
+    id: Int!
+    name: String!
     description: String
     defaultCategory: Category
     expenses: [Expense!]
@@ -69,6 +69,7 @@ type BudgetCategory {
     category: Category!
     amount: Float!
     user: User!
+
 }
 
 type Mutation {
@@ -129,7 +130,7 @@ type CategorySuccess {
 union CategoriesPayload = CategoriesSuccess | FailurePayload
 
 type CategoriesSuccess {
-    categories: [Category]!
+    categories: [Category!]!
 }
 
 union DeleteCategoryPayload = DeleteSuccess | FailurePayload
@@ -154,7 +155,7 @@ type MerchantSuccess {
 union MerchantsPayload = MerchantsSuccess | FailurePayload
 
 type MerchantsSuccess {
-    merchants: [Merchant]!
+    merchants: [Merchant!]!
 }
 
 union DeleteMerchantPayload = DeleteSuccess | FailurePayload
