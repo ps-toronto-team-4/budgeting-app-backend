@@ -36,7 +36,7 @@ public class MerchantService {
         merchant.setName(name);
         merchant.setDescription(description);
         if(defaultCategoryId == null){
-            merchant.setDefaultCategory(null)
+            merchant.setDefaultCategory(null);
         }else{
             merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
         }
@@ -57,7 +57,7 @@ public class MerchantService {
         merchant.setName(name);
         merchant.setDescription(description);
         if(defaultCategoryId == null){
-            merchant.setDefaultCategory(null)
+            merchant.setDefaultCategory(null);
         }else{
             merchant.setDefaultCategory(categoryService.getCategory(passwordHash, defaultCategoryId));
         }
