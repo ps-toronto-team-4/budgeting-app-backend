@@ -39,7 +39,7 @@ type Query {
     merchant(passwordHash: String!, id: Int!): MerchantPayload!
     merchants(passwordHash: String!): MerchantsPayload!
     budget(passwordHash:String!, id: Int!): BudgetPayload!
-    budgetByDate(passwordHash:String!, month: Int!, year: Int!): BudgetPayload!
+    budgetByDate(passwordHash:String!, month: MonthType!, year: Int!): BudgetPayload!
     budgets(passwordHash:String!): BudgetsPayload!
     budgetCategory(passwordHash:String!, id:Int!): BudgetCategoryPayload!
     budgetCategories(passwordHash:String!): BudgetCategoriesPayload!
@@ -57,7 +57,7 @@ type Expense {
 
 type Budget {
     id: Int!
-    month: Int!
+    month: MonthType!
     year: Int!
     user: User!
     budgetCategories: [BudgetCategory!]
@@ -69,7 +69,6 @@ type BudgetCategory {
     category: Category!
     amount: Float!
     user: User!
-
 }
 
 type Mutation {
@@ -90,9 +89,9 @@ type Mutation {
     createExpense(passwordHash: String!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
     updateExpense(passwordHash: String!, id: Int!, description: String, amount: Float!, epochDate: Int!, categoryId: Int, merchantId: Int): ExpensePayload!
     deleteExpense(passwordHash: String!, id: Int!): DeletePayload!
-    createBudget(passwordHash:String!, month:Int!, year:Int!): BudgetPayload!
+    createBudget(passwordHash:String!, month:MonthType!, year:Int!): BudgetPayload!
     deleteBudget(passwordHash: String!, id: Int!): DeletePayload!
-    createBudgetCategory(passwordHash: String!, amount: Float!, categoryId: Int, budgetId: Int): BudgetCategoryPayload!
+    createBudgetCategory(passwordHash: String!, amount: Float!, categoryId: Int!, budgetId: Int!): BudgetCategoryPayload!
     updateBudgetCategory(passwordHash: String!, id:Int!, amount: Float!): BudgetCategoryPayload!
     deleteBudgetCategory(passwordHash: String!, id: Int!): DeletePayload!
 }
@@ -184,4 +183,19 @@ union BudgetCategoriesPayload = BudgetCategoriesSuccess | FailurePayload
 
 type BudgetCategoriesSuccess {
     budgetCategories: [BudgetCategory!]!
+}
+
+enum MonthType {
+    JANUARY
+    FEBRUARY
+    MARCH
+    APRIL
+    MAY
+    JUNE
+    JULY
+    AUGUST
+    SEPTEMBER
+    OCTOBER
+    NOVEMBER
+    DECEMBER
 }

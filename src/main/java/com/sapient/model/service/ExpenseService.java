@@ -65,6 +65,14 @@ public class ExpenseService {
 	public Expense updateExpense(String passwordHash, Integer id, String description, Double amount,
 								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
+
+		User user;
+		try{
+			user = userService.getUserByPasswordHash(passwordHash);
+		}catch (UserNotFoundException e){
+			throw new NotAuthorizedException("Invalid passwordHash");
+		}
+
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
 		Expense expense = expenseDao.findById(id).orElse(null);

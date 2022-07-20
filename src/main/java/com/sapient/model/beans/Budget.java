@@ -9,7 +9,7 @@ public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer month;
+    private MonthType month;
     private Integer year;
 
     @ManyToOne
@@ -21,11 +21,11 @@ public class Budget {
         return id;
     }
 
-    public Integer getMonth() {
+    public MonthType getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public void setMonth(MonthType month) {
         this.month = month;
     }
 

@@ -2,6 +2,7 @@ package com.sapient.model.service;
 
 import com.sapient.exception.*;
 import com.sapient.model.beans.Budget;
+import com.sapient.model.beans.MonthType;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class BudgetService {
     @Autowired
     private BudgetRepository budgetDao;
 
-    public Budget createBudget(String passwordHash, Integer month, Integer year) throws NotAuthorizedException, BudgetTakenException {
+    public Budget createBudget(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException, BudgetTakenException {
         User user;
         try{
             user = userService.getUserByPasswordHash(passwordHash);
@@ -27,7 +28,7 @@ public class BudgetService {
             throw new NotAuthorizedException("You are not authorized to create a budget");
         }
 
-        if(budgetTaken(month, year, user.getId())){
+        if(budgetTaken(month, year, user)){
             throw new BudgetTakenException("Budget for "+ year + "-" + month + " is already created for user " + user.getUsername() );
         }
 
@@ -41,14 +42,17 @@ public class BudgetService {
     }
 
     public void deleteBudget(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
-        if (!budgetExists(id)) {
-            throw new RecordNotFoundException("Budget not found with id: "+ id);
-        }
         Budget budget = getBudget(passwordHash, id);
         budgetDao.delete(budget);
     }
 
     public Budget getBudget(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
+        User user;
+        try {
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch(Exception e){
+            throw new NotAuthorizedException("Invalid passwordHash");
+        }
         Budget budget = budgetDao.findById(id).orElse(null);
         if(budget==null){
             throw new RecordNotFoundException("Could not find the specified budget: " + id);
@@ -59,9 +63,15 @@ public class BudgetService {
         return budget;
     }
 
-    public Budget getBudgetByDate(String passwordHash, Integer month, Integer year) throws RecordNotFoundException{
-        for(Budget budget:budgetDao.findAll()){
-            if(budget.getUser().getPasswordHash().equals(passwordHash) && budget.getMonth().equals(month) && budget.getYear().equals(year)){
+    public Budget getBudgetByDate(String passwordHash, MonthType month, Integer year) throws RecordNotFoundException, NotAuthorizedException{
+        User user;
+        try {
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch(Exception e){
+            throw new NotAuthorizedException("Invalid passwordHash");
+        }
+        for(Budget budget:user.getBudgets()){
+            if(budget.getMonth().equals(month) && budget.getYear().equals(year)){
                 return budget;
             }
         }
@@ -76,19 +86,12 @@ public class BudgetService {
             throw new NotAuthorizedException("Invalid passwordHash");
         }
 
-        List<Budget> budgets = new ArrayList<Budget>();
-
-        for(Budget budget: budgetDao.findAll()){
-            if(budget.getUser().getId() == user.getId()){
-                budgets.add(budget);
-            }
-        }
-        return budgets;
+        return  user.getBudgets();
     }
 
-    public Boolean budgetTaken(Integer month, Integer year, Integer userId){
-        for(Budget budget: budgetDao.findAll()){
-            if(budget.getMonth().equals(month) && budget.getYear().equals(year) && budget.getUser().getId().equals(userId)){
+    public Boolean budgetTaken(MonthType month, Integer year, User user) {
+        for(Budget budget: user.getBudgets()){
+            if(budget.getMonth().equals(month) && budget.getYear().equals(year)){
                 return true;
             }
         }

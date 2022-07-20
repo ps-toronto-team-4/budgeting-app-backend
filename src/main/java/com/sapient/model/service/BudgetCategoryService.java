@@ -36,7 +36,7 @@ public class BudgetCategoryService {
             throw new NotAuthorizedException("You are not authorized to create a budgetCategory");
         }
 
-        if(budgetCategoryTaken(categoryId, budgetId, user.getId())){
+        if(budgetCategoryTaken(categoryId, budgetId, user)){
             throw new BudgetCategoryTakenException("BudgetCategory for budget: "+ budgetId + ", category: " +
                     categoryId + " is already created for user " + user.getUsername() );
         }
@@ -54,15 +54,14 @@ public class BudgetCategoryService {
         return budgetCategory;
     }
 
-    public BudgetCategory updateBudgetCategory(String passwordHash, Integer id, Float amount) throws NotAuthorizedException {
+    public BudgetCategory updateBudgetCategory(String passwordHash, Integer id, Float amount) throws NotAuthorizedException, RecordNotFoundException {
         User user;
-        BudgetCategory budgetCategory;
         try{
             user = userService.getUserByPasswordHash(passwordHash);
-            budgetCategory = getBudgetCategory(passwordHash, id);
-        }catch (UserNotFoundException | RecordNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to update this budgetCategory");
+        }catch (UserNotFoundException e) {
+            throw new NotAuthorizedException("Invalid passwordHash");
         }
+        BudgetCategory budgetCategory = getBudgetCategory(passwordHash, id);
         budgetCategory.setAmount(amount);
 
         budgetCategoryDao.save(budgetCategory);
@@ -70,6 +69,12 @@ public class BudgetCategoryService {
     }
 
     public void deleteBudgetCategory(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
+        User user;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch (UserNotFoundException e) {
+            throw new NotAuthorizedException("Invalid passwordHash");
+        }
         if (!budgetCategoryExists(id)) {
             throw new RecordNotFoundException("BudgetCategory not found with id: "+ id);
         }
@@ -78,9 +83,15 @@ public class BudgetCategoryService {
     }
 
     public BudgetCategory getBudgetCategory(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
+        User user;
+        try{
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch (UserNotFoundException e) {
+            throw new NotAuthorizedException("Invalid passwordHash");
+        }
         BudgetCategory budgetCategory = budgetCategoryDao.findById(id).orElse(null);
         if(budgetCategory==null){
-            throw new RecordNotFoundException();
+            throw new RecordNotFoundException("BudgetCategory not found");
         }
         if(!budgetCategory.getUser().getPasswordHash().equals(passwordHash)){
             throw new NotAuthorizedException("You are not authorized to access this budgetCategory");
@@ -96,21 +107,13 @@ public class BudgetCategoryService {
             throw new NotAuthorizedException("Invalid passwordHash");
         }
 
-        List<BudgetCategory> budgetCategories = new ArrayList<BudgetCategory>();
-
-        for(BudgetCategory budgetCategory: budgetCategoryDao.findAll()){
-            if(budgetCategory.getUser().getId() == user.getId()){
-                budgetCategories.add(budgetCategory);
-            }
-        }
-        return budgetCategories;
+        return user.getBudgetCategories();
     }
 
-    public Boolean budgetCategoryTaken(Integer categoryId, Integer budgetId, Integer userId){
-        for(BudgetCategory budgetCategory: budgetCategoryDao.findAll()){
-            if(budgetCategory.getCategory().getId() == categoryId &&
-                    budgetCategory.getBudget().getId() == budgetId &&
-                    budgetCategory.getUser().getId() == userId ){
+    public Boolean budgetCategoryTaken(Integer categoryId, Integer budgetId, User user){
+        for(BudgetCategory budgetCategory: user.getBudgetCategories()){
+            if(budgetCategory.getCategory().getId().equals(categoryId) &&
+                    budgetCategory.getBudget().getId().equals(budgetId)){
                 return true;
             }
         }

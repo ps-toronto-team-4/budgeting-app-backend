@@ -4,6 +4,7 @@ import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.controller.record.FailurePayload;
 import com.sapient.model.beans.Budget;
 import com.sapient.model.beans.Merchant;
+import com.sapient.model.beans.MonthType;
 import com.sapient.model.service.BudgetService;
 import com.sapient.model.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class BudgetController {
     }
 
     @QueryMapping
-    public Record budgetByDate(@Argument String passwordHash, @Argument Integer month, @Argument Integer year){
+    public Record budgetByDate(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year){
         try{
             return new BudgetSuccess(budgetService.getBudgetByDate(passwordHash, month, year));
         }catch(Exception e){
@@ -51,7 +52,7 @@ public class BudgetController {
     }
 
     @MutationMapping
-    public Record createBudget(@Argument String passwordHash, @Argument Integer month, @Argument Integer year) {
+    public Record createBudget(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year) {
         try{
             return new BudgetSuccess(budgetService.createBudget(passwordHash, month, year));
         }catch(Exception e){
