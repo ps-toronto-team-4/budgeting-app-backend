@@ -48,6 +48,10 @@ public class Expense {
 //		this.title = title;
 //	}
 
+	public Boolean inMonth(MonthType month, Integer year){
+		return date.getMonth() == month.ordinal() && (date.getYear()+1900) == year;
+	}
+
 	public String getDescription() {
 		return description;
 	}

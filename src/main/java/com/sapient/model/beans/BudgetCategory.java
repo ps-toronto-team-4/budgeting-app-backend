@@ -9,7 +9,7 @@ public class BudgetCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Float amount;
+    private Double amount;
 
     @ManyToOne
     private Budget budget;
@@ -24,11 +24,11 @@ public class BudgetCategory {
         return id;
     }
 
-    public Float getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Float amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

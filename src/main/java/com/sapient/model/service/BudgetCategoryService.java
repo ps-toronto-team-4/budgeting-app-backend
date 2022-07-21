@@ -26,7 +26,7 @@ public class BudgetCategoryService {
     @Autowired
     private BudgetService budgetService;
 
-    public BudgetCategory createBudgetCategory(String passwordHash, Float amount, Integer categoryId, Integer budgetId)
+    public BudgetCategory createBudgetCategory(String passwordHash, Double amount, Integer categoryId, Integer budgetId)
             throws NotAuthorizedException, BudgetCategoryTakenException, CategoryNotFoundException,
             RecordNotFoundException {
         User user;
@@ -54,7 +54,7 @@ public class BudgetCategoryService {
         return budgetCategory;
     }
 
-    public BudgetCategory updateBudgetCategory(String passwordHash, Integer id, Float amount) throws NotAuthorizedException, RecordNotFoundException {
+    public BudgetCategory updateBudgetCategory(String passwordHash, Integer id, Double amount) throws NotAuthorizedException, RecordNotFoundException {
         User user;
         try{
             user = userService.getUserByPasswordHash(passwordHash);
