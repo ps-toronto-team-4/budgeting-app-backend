@@ -64,7 +64,8 @@ public class ExpenseController {
                                 @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
-        Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        Long epochMillis = ((Long)(long)(int)epochDate) * 1000;
+        Date date = new Date(epochMillis); //Epoch time is in second not milliseconds
         try {
             return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,description,amount,date,
                     categoryId,merchantId,recurrenceId));
