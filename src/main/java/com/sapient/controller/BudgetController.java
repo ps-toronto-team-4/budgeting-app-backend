@@ -1,5 +1,6 @@
 package com.sapient.controller;
 
+import com.sapient.controller.record.BudgetDetails;
 import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.controller.record.FailurePayload;
 import com.sapient.model.beans.Budget;
@@ -35,6 +36,15 @@ public class BudgetController {
     public Record budgetByDate(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year){
         try{
             return new BudgetSuccess(budgetService.getBudgetByDate(passwordHash, month, year));
+        }catch(Exception e){
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @QueryMapping
+    public Record budgetDetails(@Argument String passwordHash, @Argument Integer id){
+        try{
+            return budgetService.getBudgetDetails(passwordHash, id);
         }catch(Exception e){
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }

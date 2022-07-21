@@ -1,5 +1,6 @@
 package com.sapient.controller;
 
+import com.sapient.model.beans.MonthType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -37,6 +38,16 @@ public class ExpenseController {
     public Record expenses(@Argument String passwordHash) {
         try {
             List<Expense> found = expenseService.getExpenses(passwordHash);
+            return new ExpensesSuccess(found);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @QueryMapping
+    public Record expensesInMonth(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year) {
+        try {
+            List<Expense> found = expenseService.getExpensesInMonth(passwordHash, month, year);
             return new ExpensesSuccess(found);
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());

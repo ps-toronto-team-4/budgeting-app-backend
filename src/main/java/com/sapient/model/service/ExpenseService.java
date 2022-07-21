@@ -1,10 +1,7 @@
 package com.sapient.model.service;
 
 import com.sapient.exception.*;
-import com.sapient.model.beans.Category;
-import com.sapient.model.beans.Expense;
-import com.sapient.model.beans.Merchant;
-import com.sapient.model.beans.User;
+import com.sapient.model.beans.*;
 import com.sapient.model.dao.ExpenseRepository;
 
 import java.util.ArrayList;
@@ -162,4 +159,15 @@ public class ExpenseService {
             return false;
         }
     }
+
+	public List<Expense> getExpensesInMonth(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException {
+		List<Expense> allExpenses = getExpenses(passwordHash);
+		List<Expense> expenses = new ArrayList<>();
+		for(Expense expense:allExpenses){
+			if(expense.inMonth(month, year)){
+				expenses.add(expense);
+			}
+		}
+		return expenses;
+	}
 }

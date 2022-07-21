@@ -1,21 +1,25 @@
 package com.sapient.model.service;
 
+import com.sapient.controller.record.BudgetCategoryDetails;
+import com.sapient.controller.record.BudgetDetails;
 import com.sapient.exception.*;
-import com.sapient.model.beans.Budget;
-import com.sapient.model.beans.MonthType;
-import com.sapient.model.beans.User;
+import com.sapient.model.beans.*;
 import com.sapient.model.dao.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class BudgetService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ExpenseService expenseService;
 
     @Autowired
     private BudgetRepository budgetDao;
@@ -100,5 +104,39 @@ public class BudgetService {
     public Boolean budgetExists(Integer id){
         Budget budget = budgetDao.findById(id).orElse(null);
         return budget != null;
+    }
+
+    public BudgetDetails getBudgetDetails(String passwordHash, Integer id) throws NotAuthorizedException, RecordNotFoundException {
+        User user;
+        try {
+            user = userService.getUserByPasswordHash(passwordHash);
+        }catch(Exception e){
+            throw new NotAuthorizedException("Invalid passwordHash");
+        }
+        Double totalBudgeted = 0.0;
+        Double totalActual = 0.0;
+        Double totalUnplanned = 0.0;
+
+        Budget budget = getBudget(passwordHash, id);
+
+        List<BudgetCategoryDetails> byCategory = new ArrayList<>();
+        HashMap<Category, Double> categoryAmounts = new HashMap<>();
+        for(BudgetCategory budgetCategory: budget.getBudgetCategories()){
+            categoryAmounts.put(budgetCategory.getCategory(), 0.0);
+            totalBudgeted += budgetCategory.getAmount();
+        }
+        for(Expense expense: expenseService.getExpensesInMonth(passwordHash, budget.getMonth(), budget.getYear())){
+            Category category = expense.getCategory();
+            if(categoryAmounts.containsKey(category)){
+                totalActual += expense.getAmount();
+                categoryAmounts.put(category, categoryAmounts.get(category) + expense.getAmount());
+            }else{
+                totalUnplanned += expense.getAmount();
+            }
+        }
+        for(BudgetCategory budgetCategory: budget.getBudgetCategories()){
+            byCategory.add(new BudgetCategoryDetails(budgetCategory.getCategory(), budgetCategory.getAmount(), categoryAmounts.get(budgetCategory.getCategory())));
+        }
+        return new BudgetDetails(budget, totalBudgeted, totalActual, totalUnplanned, byCategory);
     }
 }

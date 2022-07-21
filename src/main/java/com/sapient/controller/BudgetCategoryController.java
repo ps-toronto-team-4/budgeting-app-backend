@@ -42,7 +42,7 @@ public class BudgetCategoryController {
     }
 
     @MutationMapping
-    public Record createBudgetCategory(@Argument String passwordHash, @Argument Float amount, @Argument Integer categoryId, @Argument Integer budgetId){
+    public Record createBudgetCategory(@Argument String passwordHash, @Argument Double amount, @Argument Integer categoryId, @Argument Integer budgetId){
         try{
             return new BudgetCategorySuccess(budgetCategoryService.createBudgetCategory(passwordHash, amount, categoryId, budgetId));
         }catch(Exception e){
@@ -51,7 +51,7 @@ public class BudgetCategoryController {
     }
 
     @MutationMapping
-    public Record updateBudgetCategory(@Argument String passwordHash, @Argument Integer id, @Argument Float amount){
+    public Record updateBudgetCategory(@Argument String passwordHash, @Argument Integer id, @Argument Double amount){
         try{
             return new BudgetCategorySuccess(budgetCategoryService.updateBudgetCategory(passwordHash, id, amount));
         }catch(Exception e){
