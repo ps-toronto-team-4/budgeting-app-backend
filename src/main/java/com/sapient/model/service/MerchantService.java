@@ -7,7 +7,6 @@ import com.sapient.exception.CategoryNotFoundException;
 import com.sapient.exception.MerchantNotFoundException;
 import com.sapient.exception.NotAuthorizedException;
 import com.sapient.exception.UserNotFoundException;
-import com.sapient.model.beans.Category;
 import com.sapient.model.beans.Merchant;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.MerchantRepository;
@@ -26,12 +25,8 @@ public class MerchantService {
     private CategoryService categoryService;
 
     public Merchant createMerchant(String passwordHash, String name, String description, Integer defaultCategoryId) throws NotAuthorizedException, CategoryNotFoundException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(UserNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to create a merchant");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
+
         Merchant merchant = new Merchant();
         merchant.setName(name);
         merchant.setDescription(description);
@@ -46,13 +41,12 @@ public class MerchantService {
     }
 
     public Merchant updateMerchant(String passwordHash, Integer id, String name, String description, Integer defaultCategoryId) throws NotAuthorizedException, CategoryNotFoundException {
-        User user;
+        User user = userService.getUserByPasswordHash(passwordHash);
         Merchant merchant;
         try{
-            user = userService.getUserByPasswordHash(passwordHash);
             merchant = getMerchant(passwordHash, id);
-        }catch (UserNotFoundException | MerchantNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to update this category");
+        }catch (MerchantNotFoundException e){
+            throw new NotAuthorizedException("You are not authorized to update this merchant");
         }
         merchant.setName(name);
         merchant.setDescription(description);
@@ -80,18 +74,13 @@ public class MerchantService {
             throw new MerchantNotFoundException();
         }
         if(!merchant.getUser().getPasswordHash().equals(passwordHash)){
-            throw new NotAuthorizedException();
+            throw new NotAuthorizedException("You are not authorized to get this merchant");
         }
         return merchant;
     }
 
     public List<Merchant> getMerchants(String passwordHash) throws NotAuthorizedException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException();
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
 
         List<Merchant> merchants = new ArrayList<Merchant>();
 

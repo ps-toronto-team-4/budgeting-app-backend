@@ -2,11 +2,8 @@ package com.sapient.model.service;
 
 import com.sapient.exception.NotAuthorizedException;
 import com.sapient.exception.RecordNotFoundException;
-import com.sapient.exception.UserNotFoundException;
-import com.sapient.model.beans.Expense;
 import com.sapient.model.beans.Recurrence;
 import com.sapient.model.beans.User;
-import com.sapient.model.dao.ExpenseRepository;
 import com.sapient.model.dao.RecurrenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +19,7 @@ public class RecurrenceService {
     private UserService userService;
 
     public Recurrence createRecurrence(String passwordHash, String title, String description, Double amount) throws NotAuthorizedException {
-		User foundUser;
-		try {
-			foundUser = userService.getUserByPasswordHash(passwordHash);
-		} catch (UserNotFoundException e) {
-			throw new NotAuthorizedException();
-		}
+		User foundUser = userService.getUserByPasswordHash(passwordHash);
 		Recurrence recurrence = new Recurrence();
 		recurrence.setStartDate( new Date(System.currentTimeMillis()) );
 		//TODO endDate
@@ -43,11 +35,7 @@ public class RecurrenceService {
     public Recurrence deleteRecurrence(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
 		Recurrence found = recurrenceDao.findById(id).orElse(null);
 
-		try{
-			userService.getUserByPasswordHash(passwordHash);
-		}catch (UserNotFoundException e){
-			throw new NotAuthorizedException("Invalid passwordHash");
-		}
+		User user = userService.getUserByPasswordHash(passwordHash);
 
     	if(found == null) {
     		throw new RecordNotFoundException("Unable to find recurrence with id '"+id+"' ");
@@ -61,12 +49,7 @@ public class RecurrenceService {
 
     public Recurrence getExpense(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
 		Recurrence found = recurrenceDao.findById(id).orElse(null);
-
-		try{
-			userService.getUserByPasswordHash(passwordHash);
-		}catch(UserNotFoundException e){
-			throw new NotAuthorizedException("Invalid passwordHash");
-		}
+		User user = userService.getUserByPasswordHash(passwordHash);
 
     	if(found == null) {
     		throw new RecordNotFoundException("Unable to find Recurrence with id '"+id+"' ");

@@ -8,8 +8,6 @@ import com.sapient.model.dao.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -25,12 +23,7 @@ public class BudgetService {
     private BudgetRepository budgetDao;
 
     public Budget createBudget(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException, BudgetTakenException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to create a budget");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
 
         if(budgetTaken(month, year, user)){
             throw new BudgetTakenException("Budget for "+ year + "-" + month + " is already created for user " + user.getUsername() );
@@ -51,12 +44,7 @@ public class BudgetService {
     }
 
     public Budget getBudget(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
         Budget budget = budgetDao.findById(id).orElse(null);
         if(budget==null){
             throw new RecordNotFoundException("Could not find the specified budget: " + id);
@@ -68,12 +56,7 @@ public class BudgetService {
     }
 
     public Budget getBudgetByDate(String passwordHash, MonthType month, Integer year) throws RecordNotFoundException, NotAuthorizedException{
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
         for(Budget budget:user.getBudgets()){
             if(budget.getMonth().equals(month) && budget.getYear().equals(year)){
                 return budget;
@@ -83,13 +66,7 @@ public class BudgetService {
     }
 
     public List<Budget> getBudgets(String passwordHash) throws NotAuthorizedException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
-
+        User user = userService.getUserByPasswordHash(passwordHash);
         return  user.getBudgets();
     }
 
@@ -107,12 +84,8 @@ public class BudgetService {
     }
 
     public BudgetDetails getBudgetDetails(String passwordHash, Integer id) throws NotAuthorizedException, RecordNotFoundException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
+
         Double totalBudgeted = 0.0;
         Double totalActual = 0.0;
         Double totalUnplanned = 0.0;
