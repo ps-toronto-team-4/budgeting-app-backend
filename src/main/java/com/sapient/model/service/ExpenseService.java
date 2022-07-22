@@ -1,11 +1,14 @@
 package com.sapient.model.service;
 
+import com.sapient.controller.record.MonthBreakdownCategory;
+import com.sapient.controller.record.MonthBreakdown;
 import com.sapient.exception.*;
 import com.sapient.model.beans.*;
 import com.sapient.model.dao.ExpenseRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,19 +30,16 @@ public class ExpenseService {
 	private MerchantService merchantService;
 
     public Expense createExpense(String passwordHash, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
-		User foundUser;
+		User foundUser = userService.getUserByPasswordHash(passwordHash);;
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
 		try {
-			foundUser = userService.getUserByPasswordHash(passwordHash);
 			if(categoryId != null) {
 				foundCategory = categoryService.getCategory(passwordHash, categoryId);
 			}
 			if(merchantId != null) {
 				foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
 			}
-		} catch (UserNotFoundException e) {
-			throw new NotAuthorizedException("Not authorized: " + e.getMessage());
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Can't find category for '"+categoryId+"'");
 		} catch (MerchantNotFoundException e) {
@@ -63,12 +63,7 @@ public class ExpenseService {
 								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
 
-		User user;
-		try{
-			user = userService.getUserByPasswordHash(passwordHash);
-		}catch (UserNotFoundException e){
-			throw new NotAuthorizedException("Invalid passwordHash");
-		}
+		User user = userService.getUserByPasswordHash(passwordHash);
 
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
@@ -112,7 +107,7 @@ public class ExpenseService {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
-    		throw new NotAuthorizedException();
+    		throw new NotAuthorizedException("You are not authorized to delete this expense");
     	}
     	expenseDao.delete(found);
         return found;
@@ -124,18 +119,13 @@ public class ExpenseService {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
-    		throw new NotAuthorizedException();
+    		throw new NotAuthorizedException("You are not authorized to view this expense");
     	}
         return found;
     }
 
 	public List<Expense> getExpenses(String passwordHash ) throws NotAuthorizedException {
-		User user;
-		try {
-			user = userService.getUserByPasswordHash(passwordHash);
-		}catch(Exception e){
-			throw new NotAuthorizedException();
-		}
+		User user = userService.getUserByPasswordHash(passwordHash);
 
 		List<Expense> foundAll = new ArrayList<Expense>();
 		expenseDao.findAll().forEach(expense -> foundAll.add(expense));
@@ -169,5 +159,27 @@ public class ExpenseService {
 			}
 		}
 		return expenses;
+	}
+
+	public MonthBreakdown getMonthBreakdown(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException {
+		List<Expense> monthlyExpenses = getExpensesInMonth(passwordHash, month, year);
+		List<MonthBreakdownCategory> byCategory = new ArrayList<>();
+		User user = userService.getUserByPasswordHash(passwordHash);
+		Double totalSpent = 0.0;
+		HashMap<Category, Double> categoryTotals = new HashMap<>();
+		for(Category category: user.getCategories()){
+			categoryTotals.put(category, 0.0);
+		}
+		categoryTotals.put(null, 0.0); // uncategorized
+		for(Expense expense:monthlyExpenses){
+			Double amount = expense.getAmount();
+			Category category = expense.getCategory();
+			totalSpent += amount;
+			categoryTotals.put(category, categoryTotals.get(category)+amount);
+		}
+		for(Category category: categoryTotals.keySet()){
+			byCategory.add(new MonthBreakdownCategory(category, categoryTotals.get(category)));
+		}
+		return new MonthBreakdown(month, year, totalSpent, byCategory);
 	}
 }

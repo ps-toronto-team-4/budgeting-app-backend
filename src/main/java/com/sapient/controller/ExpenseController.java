@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 
 import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.controller.record.FailurePayload;
-import com.sapient.exception.RecordNotFoundException;
 import com.sapient.model.beans.Expense;
 import com.sapient.model.service.ExpenseService;
 
@@ -49,6 +48,15 @@ public class ExpenseController {
         try {
             List<Expense> found = expenseService.getExpensesInMonth(passwordHash, month, year);
             return new ExpensesSuccess(found);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @QueryMapping
+    public Record monthBreakdown(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year) {
+        try {
+            return expenseService.getMonthBreakdown(passwordHash, month, year);
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
         }

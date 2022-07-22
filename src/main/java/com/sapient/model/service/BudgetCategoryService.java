@@ -8,7 +8,6 @@ import com.sapient.model.dao.BudgetCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,12 +28,7 @@ public class BudgetCategoryService {
     public BudgetCategory createBudgetCategory(String passwordHash, Double amount, Integer categoryId, Integer budgetId)
             throws NotAuthorizedException, BudgetCategoryTakenException, CategoryNotFoundException,
             RecordNotFoundException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to create a budgetCategory");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
 
         if(budgetCategoryTaken(categoryId, budgetId, user)){
             throw new BudgetCategoryTakenException("BudgetCategory for budget: "+ budgetId + ", category: " +
@@ -55,12 +49,8 @@ public class BudgetCategoryService {
     }
 
     public BudgetCategory updateBudgetCategory(String passwordHash, Integer id, Double amount) throws NotAuthorizedException, RecordNotFoundException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e) {
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
+
         BudgetCategory budgetCategory = getBudgetCategory(passwordHash, id);
         budgetCategory.setAmount(amount);
 
@@ -69,12 +59,8 @@ public class BudgetCategoryService {
     }
 
     public void deleteBudgetCategory(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e) {
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
+
         if (!budgetCategoryExists(id)) {
             throw new RecordNotFoundException("BudgetCategory not found with id: "+ id);
         }
@@ -83,12 +69,8 @@ public class BudgetCategoryService {
     }
 
     public BudgetCategory getBudgetCategory(String passwordHash, Integer id) throws RecordNotFoundException, NotAuthorizedException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e) {
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
+
         BudgetCategory budgetCategory = budgetCategoryDao.findById(id).orElse(null);
         if(budgetCategory==null){
             throw new RecordNotFoundException("BudgetCategory not found");
@@ -100,13 +82,7 @@ public class BudgetCategoryService {
     }
 
     public List<BudgetCategory> getBudgetCategories(String passwordHash) throws NotAuthorizedException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException("Invalid passwordHash");
-        }
-
+        User user = userService.getUserByPasswordHash(passwordHash);
         return user.getBudgetCategories();
     }
 

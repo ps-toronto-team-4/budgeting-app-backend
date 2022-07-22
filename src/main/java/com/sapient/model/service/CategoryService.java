@@ -22,12 +22,7 @@ public class CategoryService {
     private UserService userService;
 
     public Category createCategory(String passwordHash, String name, String colourHex, String description) throws NotAuthorizedException {
-        User user;
-        try{
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch (UserNotFoundException e){
-            throw new NotAuthorizedException("You are not authorized to create a category");
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
         Category category = new Category();
         category.setName(name);
         category.setColourHex(colourHex);
@@ -38,12 +33,11 @@ public class CategoryService {
     }
 
     public Category updateCategory(String passwordHash, Integer id, String name, String colourHex, String description) throws NotAuthorizedException {
-        User user;
+        User user = userService.getUserByPasswordHash(passwordHash);
         Category category;
         try{
-            user = userService.getUserByPasswordHash(passwordHash);
             category = getCategory(passwordHash, id);
-        }catch (UserNotFoundException | CategoryNotFoundException e){
+        }catch (CategoryNotFoundException e){
             throw new NotAuthorizedException("You are not authorized to update this category");
         }
         category.setName(name);
@@ -73,12 +67,7 @@ public class CategoryService {
     }
 
     public List<Category> getCategories(String passwordHash) throws NotAuthorizedException {
-        User user;
-        try {
-            user = userService.getUserByPasswordHash(passwordHash);
-        }catch(Exception e){
-            throw new NotAuthorizedException();
-        }
+        User user = userService.getUserByPasswordHash(passwordHash);
 
         List<Category> categories = new ArrayList<Category>();
 
