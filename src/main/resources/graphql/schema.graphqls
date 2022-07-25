@@ -93,10 +93,18 @@ type MonthBreakdown {
     year: Int!
     totalSpent: Float!
     byCategory: [MonthBreakdownCategory!]!
+    byMerchant: [MonthBreakdownMerchant!]!
+    topCategory: MonthBreakdownCategory
+    topMerchant: MonthBreakdownMerchant
 }
 
 type MonthBreakdownCategory {
     category: Category
+    amountSpent: Float!
+}
+
+type MonthBreakdownMerchant {
+    merchant: Merchant
     amountSpent: Float!
 }
 

@@ -2,6 +2,7 @@ package com.sapient.model.service;
 
 import com.sapient.controller.record.MonthBreakdownCategory;
 import com.sapient.controller.record.MonthBreakdown;
+import com.sapient.controller.record.MonthBreakdownMerchant;
 import com.sapient.exception.*;
 import com.sapient.model.beans.*;
 import com.sapient.model.dao.ExpenseRepository;
@@ -164,22 +165,85 @@ public class ExpenseService {
 	public MonthBreakdown getMonthBreakdown(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException {
 		List<Expense> monthlyExpenses = getExpensesInMonth(passwordHash, month, year);
 		List<MonthBreakdownCategory> byCategory = new ArrayList<>();
+		List<MonthBreakdownMerchant> byMerchant = new ArrayList<>();
 		User user = userService.getUserByPasswordHash(passwordHash);
 		Double totalSpent = 0.0;
+
+		Category topCategory = null;
+		Merchant topMerchant = null;
+
 		HashMap<Category, Double> categoryTotals = new HashMap<>();
 		for(Category category: user.getCategories()){
 			categoryTotals.put(category, 0.0);
 		}
 		categoryTotals.put(null, 0.0); // uncategorized
+
+		HashMap<Merchant, Double> merchantTotals = new HashMap<>();
+		for(Merchant merchant: user.getMerchants()){
+			merchantTotals.put(merchant, 0.0);
+		}
+		merchantTotals.put(null, 0.0); // uncategorized
+
 		for(Expense expense:monthlyExpenses){
 			Double amount = expense.getAmount();
 			Category category = expense.getCategory();
+			Merchant merchant = expense.getMerchant();
 			totalSpent += amount;
 			categoryTotals.put(category, categoryTotals.get(category)+amount);
+			merchantTotals.put(merchant, merchantTotals.get(merchant)+amount);
 		}
 		for(Category category: categoryTotals.keySet()){
+			Double amount  = categoryTotals.get(category);
 			byCategory.add(new MonthBreakdownCategory(category, categoryTotals.get(category)));
+			if(category == null){
+				continue;
+			}
+			if(topCategory == null){
+				topCategory = category;
+			}
+			if(amount > categoryTotals.get(topCategory)){
+				topCategory = category;
+			}
 		}
-		return new MonthBreakdown(month, year, totalSpent, byCategory);
+
+		for(Merchant merchant: merchantTotals.keySet()){
+			Double amount  = merchantTotals.get(merchant);
+			byMerchant.add(new MonthBreakdownMerchant(merchant, merchantTotals.get(merchant)));
+			if(merchant == null){
+				continue;
+			}
+			if(topMerchant == null){
+				topMerchant = merchant;
+			}
+			if(amount > merchantTotals.get(topMerchant)){
+				topMerchant = merchant;
+			}
+		}
+
+		return new MonthBreakdown(month, year, totalSpent, new MonthBreakdownCategory(topCategory, categoryTotals.get(topCategory)), new MonthBreakdownMerchant(topMerchant, merchantTotals.get(topMerchant)), byCategory, byMerchant);
 	}
+
+	private MonthYear getFirstMonth(User user){
+		List<Expense> expenses = user.getExpenses();
+		Date lowestDate = expenses.get(0).getDate();
+		for(Expense expense: expenses){
+			if(lowestDate.compareTo(expense.getDate()) < 0){
+				lowestDate = expense.getDate();
+			}
+		}
+		return new MonthYear(MonthType.values()[lowestDate.getMonth()], lowestDate.getYear()+1900);
+	}
+
+	private MonthYear getLastMonth(User user){
+		List<Expense> expenses = user.getExpenses();
+		Date highestDate = expenses.get(0).getDate();
+		for(Expense expense: expenses){
+			if(highestDate.compareTo(expense.getDate()) > 0){
+				highestDate = expense.getDate();
+			}
+		}
+		return new MonthYear(MonthType.values()[highestDate.getMonth()], highestDate.getYear()+1900);
+	}
+
+
 }
