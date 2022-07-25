@@ -71,6 +71,15 @@ public class BudgetController {
     }
 
     @MutationMapping
+    public Record copyBudget(@Argument String passwordHash, @Argument Integer id, @Argument MonthType month, @Argument Integer year) {
+        try{
+            return new BudgetSuccess(budgetService.copyBudget(passwordHash, id, month, year));
+        }catch(Exception e){
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @MutationMapping
     public Record deleteBudget(@Argument String passwordHash, @Argument Integer id){
         try{
             budgetService.deleteBudget(passwordHash, id);
