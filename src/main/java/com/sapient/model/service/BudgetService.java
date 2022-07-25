@@ -4,6 +4,7 @@ import com.sapient.controller.record.BudgetCategoryDetails;
 import com.sapient.controller.record.BudgetDetails;
 import com.sapient.exception.*;
 import com.sapient.model.beans.*;
+import com.sapient.model.dao.BudgetCategoryRepository;
 import com.sapient.model.dao.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class BudgetService {
     @Autowired
     private BudgetRepository budgetDao;
 
+    @Autowired
+    private BudgetCategoryRepository budgetCategoryDao;
+
     public Budget createBudget(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException, BudgetTakenException {
         User user = userService.getUserByPasswordHash(passwordHash);
 
@@ -35,6 +39,19 @@ public class BudgetService {
         budget.setUser(user);
 
         budgetDao.save(budget);
+        return budget;
+    }
+
+    public Budget copyBudget(String passwordHash, Integer id, MonthType month, Integer year) throws NotAuthorizedException, BudgetTakenException, RecordNotFoundException {
+        Budget budgetToCopy = getBudget(passwordHash, id);
+        List<BudgetCategory> budgetCategories = budgetToCopy.getBudgetCategories();
+        List<BudgetCategory> newBudgetCategories = new ArrayList<>();
+        Budget budget = createBudget(passwordHash, month, year);
+        budget = budgetDao.save(budget);
+        for(BudgetCategory budgetCategory: budgetCategories){
+            newBudgetCategories.add(copyBudgetCategoryToNewBudget(budgetCategory, budget));
+        }
+        budget.setBudgetCategories(newBudgetCategories);
         return budget;
     }
 
@@ -111,5 +128,15 @@ public class BudgetService {
             byCategory.add(new BudgetCategoryDetails(budgetCategory.getCategory(), budgetCategory.getAmount(), categoryAmounts.get(budgetCategory.getCategory())));
         }
         return new BudgetDetails(budget, totalBudgeted, totalActual, totalUnplanned, byCategory);
+    }
+
+    private BudgetCategory copyBudgetCategoryToNewBudget(BudgetCategory budgetCategory, Budget newBudget){
+        BudgetCategory newBudgetCategory = new BudgetCategory();
+        newBudgetCategory.setBudget(newBudget);
+        newBudgetCategory.setAmount(budgetCategory.getAmount());
+        newBudgetCategory.setCategory(budgetCategory.getCategory());
+        newBudgetCategory.setUser(budgetCategory.getUser());
+        budgetCategoryDao.save(newBudgetCategory);
+        return newBudgetCategory;
     }
 }
