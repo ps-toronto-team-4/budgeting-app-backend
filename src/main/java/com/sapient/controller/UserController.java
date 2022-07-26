@@ -27,14 +27,22 @@ public class UserController {
     }
 
     @QueryMapping
-    public User user(@Argument String username) {
+    public Object user(@Argument String passwordHash) {
+        try {
+            return userService.getUserByPasswordHash(passwordHash);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @QueryMapping
+    public User userTest(@Argument String username) {
         try {
             return userService.getByUsername(username);
         } catch (Exception e) {
             return null;
         }
     }
-
     record SignInSuccess(String passwordHash) {}
 
     @QueryMapping

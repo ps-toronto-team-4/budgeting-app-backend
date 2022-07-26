@@ -36,7 +36,8 @@ type Query {
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
-    user(username: String!): User
+    user(passwordHash: String!): UserPayload!
+    userTest(username: String!): User
     signIn(username: String!, password: String!): SignInPayload!
     merchant(passwordHash: String!, id: Int!): MerchantPayload!
     merchants(passwordHash: String!): MerchantsPayload!
@@ -226,6 +227,8 @@ type BudgetCategoriesSuccess {
 union BudgetDetailsPayload = BudgetDetails | FailurePayload
 
 union MonthBreakdownPayload = MonthBreakdown | FailurePayload
+
+union UserPayload = User | FailurePayload
 
 enum MonthType {
     JANUARY
