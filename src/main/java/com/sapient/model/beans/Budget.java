@@ -52,4 +52,12 @@ public class Budget {
     public void setBudgetCategories(List<BudgetCategory> budgetCategories) {
         this.budgetCategories = budgetCategories;
     }
+
+    public Double getAmountBudgeted(){
+        Double amountBudgeted = 0.0;
+        for(BudgetCategory budgetCategory: getBudgetCategories()){
+            amountBudgeted += budgetCategory.getAmount();
+        }
+        return amountBudgeted;
+    }
 }
