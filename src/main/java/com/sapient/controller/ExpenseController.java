@@ -53,15 +53,6 @@ public class ExpenseController {
         }
     }
 
-    @QueryMapping
-    public Record monthBreakdown(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year) {
-        try {
-            return expenseService.getMonthBreakdown(passwordHash, month, year);
-        } catch (Exception e) {
-            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
-        }
-    }
-
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping

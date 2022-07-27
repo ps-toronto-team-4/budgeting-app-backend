@@ -33,6 +33,7 @@ type Query {
     expenses(passwordHash: String!): ExpensesPayload!
     expensesInMonth(passwordHash: String!, month: MonthType!, year: Int!): ExpensesPayload!
     monthBreakdown(passwordHash: String!, month: MonthType!, year: Int!): MonthBreakdownPayload!
+    monthsTotals(passwordHash: String!): MonthsTotalsPayload!
     greeting: String!
     category(passwordHash: String!, id: Int!): CategoryPayload!
     categories(passwordHash: String!): CategoriesPayload!
@@ -107,6 +108,18 @@ type MonthBreakdownCategory {
 type MonthBreakdownMerchant {
     merchant: Merchant
     amountSpent: Float!
+}
+
+type MonthsTotals {
+    averageSpent: Float!
+    byMonth: [MonthsTotalsItem!]!
+}
+
+type MonthsTotalsItem {
+    month: MonthType!
+    year: Int!
+    amountSpent: Float!
+    amountBudgeted: Float!
 }
 
 type Mutation {
@@ -229,6 +242,8 @@ union BudgetDetailsPayload = BudgetDetails | FailurePayload
 union MonthBreakdownPayload = MonthBreakdown | FailurePayload
 
 union UserPayload = User | FailurePayload
+
+union MonthsTotalsPayload = MonthsTotals | FailurePayload
 
 enum MonthType {
     JANUARY
