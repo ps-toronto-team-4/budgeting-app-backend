@@ -1,0 +1,31 @@
+version: "3"
+services:
+  springboot-app:
+    container_name: spring-app
+    restart: always
+    build: .
+    ports:
+      - "9090:9090"
+    environment:
+      POSTGRES_HOST: postgresdb
+    depends_on:
+      - postgresdb
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    volumes:
+      -  /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: admin123
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    ports:
+      - "9092:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+    depends_on:
+      - postgresdb
