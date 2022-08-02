@@ -1,1 +1,1 @@
-docker compose down --volume --rmi all
+docker compose stop
