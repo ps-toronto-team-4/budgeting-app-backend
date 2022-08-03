@@ -151,4 +151,9 @@ public class BudgetService {
         }
         return amountSpentPlanned;
     }
+
+    public BudgetDetails getBudgetDetailsByDate(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException, RecordNotFoundException {
+        Budget budget = getBudgetByDate(passwordHash, month, year);
+        return getBudgetDetails(passwordHash, budget.getId());
+    }
 }
