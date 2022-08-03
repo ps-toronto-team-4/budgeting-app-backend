@@ -1,10 +1,7 @@
 package com.sapient.model.service;
 
 import com.sapient.exception.*;
-import com.sapient.model.beans.Category;
-import com.sapient.model.beans.Expense;
-import com.sapient.model.beans.Merchant;
-import com.sapient.model.beans.User;
+import com.sapient.model.beans.*;
 import com.sapient.model.dao.ExpenseRepository;
 
 import java.util.ArrayList;
@@ -29,20 +26,17 @@ public class ExpenseService {
 	@Autowired
 	private MerchantService merchantService;
 
-    public Expense createExpense(String passwordHash, String title, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
-		User foundUser;
+    public Expense createExpense(String passwordHash, String description, Double amount, Date date, Integer categoryId, Integer merchantId, Integer recurrenceId) throws NotAuthorizedException, RecordNotFoundException {
+		User foundUser = userService.getUserByPasswordHash(passwordHash);;
 		Category foundCategory = null;
 		Merchant foundMerchant = null;
 		try {
-			foundUser = userService.getUserByPasswordHash(passwordHash);
 			if(categoryId != null) {
 				foundCategory = categoryService.getCategory(passwordHash, categoryId);
 			}
 			if(merchantId != null) {
 				foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
 			}
-		} catch (UserNotFoundException e) {
-			throw new NotAuthorizedException("Not authorized: " + e.getMessage());
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Can't find category for '"+categoryId+"'");
 		} catch (MerchantNotFoundException e) {
@@ -53,7 +47,7 @@ public class ExpenseService {
 //		expense.setDate( new Date(System.currentTimeMillis()) );
 		expense.setDate(date);
         expense.setUser(foundUser);
-    	expense.setTitle(title);
+//    	expense.setTitle(title);
     	expense.setAmount(amount);
     	expense.setDescription(description);
 		expense.setCategory(foundCategory);
@@ -62,11 +56,14 @@ public class ExpenseService {
     	return expense;
     }
 
-	public Expense updateExpense(String passwordHash, Integer id, String title, String description, Double amount,
+	public Expense updateExpense(String passwordHash, Integer id, String description, Double amount,
 								 Date date, Integer categoryId, Integer merchantId, Integer recurrenceId)
 			throws NotAuthorizedException, RecordNotFoundException {
-		Category foundCategory;
-		Merchant foundMerchant;
+
+		User user = userService.getUserByPasswordHash(passwordHash);
+
+		Category foundCategory = null;
+		Merchant foundMerchant = null;
 		Expense expense = expenseDao.findById(id).orElse(null);
 		if(expense == null){
 			throw new RecordNotFoundException("Can not find Expense with ID of '"+id+"'");
@@ -76,8 +73,12 @@ public class ExpenseService {
 					"authenticated properly");
 		}
 		try {
-			foundCategory = categoryService.getCategory(passwordHash, categoryId);
-			foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
+			if(categoryId != null){
+				foundCategory = categoryService.getCategory(passwordHash, categoryId);
+			}
+			if(merchantId != null){
+				foundMerchant = merchantService.getMerchant(passwordHash, merchantId);
+			}
 		} catch (CategoryNotFoundException e) {
 			throw new RecordNotFoundException("Failed to find linked components or authentication to linked " +
 					"resources (category) denied: " + e.getMessage());
@@ -87,7 +88,7 @@ public class ExpenseService {
 		}
 
 		expense.setDate(date);
-		expense.setTitle(title);
+//		expense.setTitle(title);
 		expense.setAmount(amount);
 		expense.setDescription(description);
 		expense.setCategory(foundCategory);
@@ -103,7 +104,7 @@ public class ExpenseService {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
-    		throw new NotAuthorizedException();
+    		throw new NotAuthorizedException("You are not authorized to delete this expense");
     	}
     	expenseDao.delete(found);
         return found;
@@ -115,18 +116,13 @@ public class ExpenseService {
     		throw new RecordNotFoundException("Unable to find Expense with id '"+id+"' ");
     	}
     	if(!found.getUser().getPasswordHash().equals(passwordHash)) {
-    		throw new NotAuthorizedException();
+    		throw new NotAuthorizedException("You are not authorized to view this expense");
     	}
         return found;
     }
 
 	public List<Expense> getExpenses(String passwordHash ) throws NotAuthorizedException {
-		User user;
-		try {
-			user = userService.getUserByPasswordHash(passwordHash);
-		}catch(Exception e){
-			throw new NotAuthorizedException();
-		}
+		User user = userService.getUserByPasswordHash(passwordHash);
 
 		List<Expense> foundAll = new ArrayList<Expense>();
 		expenseDao.findAll().forEach(expense -> foundAll.add(expense));
@@ -150,4 +146,15 @@ public class ExpenseService {
             return false;
         }
     }
+
+	public List<Expense> getExpensesInMonth(String passwordHash, MonthType month, Integer year) throws NotAuthorizedException {
+		List<Expense> allExpenses = getExpenses(passwordHash);
+		List<Expense> expenses = new ArrayList<>();
+		for(Expense expense:allExpenses){
+			if(expense.inMonth(month, year)){
+				expenses.add(expense);
+			}
+		}
+		return expenses;
+	}
 }

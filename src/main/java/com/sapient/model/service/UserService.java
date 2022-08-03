@@ -1,9 +1,6 @@
 package com.sapient.model.service;
 
-import com.sapient.exception.EmailAlreadyTakenException;
-import com.sapient.exception.UserNotFoundException;
-import com.sapient.exception.UsernameAlreadyTakenException;
-import com.sapient.exception.UsernameTooLongException;
+import com.sapient.exception.*;
 import com.sapient.model.beans.User;
 import com.sapient.model.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -101,13 +99,13 @@ public class UserService {
         return false;
     }
 
-    public User getUserByPasswordHash(String passwordHash) throws UserNotFoundException{
+    public User getUserByPasswordHash(String passwordHash) throws NotAuthorizedException{
         for(User user:userDao.findAll()){
             if(user.getPasswordHash().equals(passwordHash)){
                 return user;
             }
         }
-        throw new UserNotFoundException();
+        throw new NotAuthorizedException("Invalid passwordHash");
     }
 
     public Boolean emailTaken(String email) {
@@ -125,6 +123,6 @@ public class UserService {
                 return user;
             }
         }
-        throw new UserNotFoundException();
+        throw new UserNotFoundException("Incorrect username '" + username + "' supplied.");
     }
 }

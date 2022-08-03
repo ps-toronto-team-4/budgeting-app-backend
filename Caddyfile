@@ -1,0 +1,7 @@
+backend.ps4.bornais.ca {
+    reverse_proxy localhost:9095
+}
+
+pgadmin.ps4.bornais.ca {
+    reverse_proxy localhost:9096
+}

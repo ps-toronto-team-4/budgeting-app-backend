@@ -1,5 +1,6 @@
 package com.sapient.controller;
 
+import com.sapient.model.beans.MonthType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Controller;
 
 import com.sapient.controller.record.DeleteSuccess;
 import com.sapient.controller.record.FailurePayload;
-import com.sapient.exception.RecordNotFoundException;
 import com.sapient.model.beans.Expense;
 import com.sapient.model.service.ExpenseService;
 
@@ -43,16 +43,26 @@ public class ExpenseController {
         }
     }
 
+    @QueryMapping
+    public Record expensesInMonth(@Argument String passwordHash, @Argument MonthType month, @Argument Integer year) {
+        try {
+            List<Expense> found = expenseService.getExpensesInMonth(passwordHash, month, year);
+            return new ExpensesSuccess(found);
+        } catch (Exception e) {
+            return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
     // Properties of a returned object from a @SchemaMapping method map to graphql fields of the same name.
     // Eg: "exceptionName".
     @MutationMapping
-    public Record createExpense(@Argument String passwordHash, @Argument String title, @Argument String description,
+    public Record createExpense(@Argument String passwordHash, @Argument String description,
                                 @Argument Double amount, @Argument Integer epochDate, @Argument Integer categoryId,
                                 @Argument Integer merchantId, @Argument Integer recurrenceId) {
-
-        Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        Long epochMillis = ((Long)(long)(int)epochDate) * 1000;
+        Date date = new Date(epochMillis); //Epoch time is in second not milliseconds
         try {
-            return new ExpenseSuccess(expenseService.createExpense(passwordHash,title,description,amount,date,
+            return new ExpenseSuccess(expenseService.createExpense(passwordHash,description,amount,date,
                     categoryId,merchantId,recurrenceId));
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());
@@ -60,13 +70,14 @@ public class ExpenseController {
     }
 
     @MutationMapping
-    public Record updateExpense(@Argument String passwordHash, @Argument Integer id, @Argument String title,
+    public Record updateExpense(@Argument String passwordHash, @Argument Integer id,
                                 @Argument String description, @Argument Double amount, @Argument Integer epochDate,
                                 @Argument Integer categoryId, @Argument Integer merchantId,
                                 @Argument Integer recurrenceId){
-        Date date = new Date(epochDate * 1000); //Epoch time is in second not milliseconds
+        Long epochMillis = ((Long)(long)(int)epochDate) * 1000;
+        Date date = new Date(epochMillis); //Epoch time is in second not milliseconds
         try {
-            return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,title,description,amount,date,
+            return new ExpenseSuccess(expenseService.updateExpense(passwordHash,id,description,amount,date,
                     categoryId,merchantId,recurrenceId));
         } catch (Exception e) {
             return new FailurePayload(e.getClass().getSimpleName(), e.getMessage());

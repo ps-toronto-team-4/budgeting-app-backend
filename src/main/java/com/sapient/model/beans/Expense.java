@@ -16,7 +16,7 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-	private String title;
+//	private String title;
 
 	private String description;
 
@@ -40,12 +40,16 @@ public class Expense {
 		return id;
 	}
 
-	public String getTitle() {
-		return title;
-	}
+//	public String getTitle() {
+//		return title;
+//	}
+//
+//	public void setTitle(String title) {
+//		this.title = title;
+//	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public Boolean inMonth(MonthType month, Integer year){
+		return date.getMonth() == month.ordinal() && (date.getYear()+1900) == year;
 	}
 
 	public String getDescription() {
