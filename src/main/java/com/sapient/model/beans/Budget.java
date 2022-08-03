@@ -1,6 +1,7 @@
 package com.sapient.model.beans;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -59,5 +60,13 @@ public class Budget {
             amountBudgeted += budgetCategory.getAmount();
         }
         return amountBudgeted;
+    }
+
+    public List<Category> getCategories(){
+        List<Category> categories = new ArrayList<>();
+        for(BudgetCategory budgetCategory: budgetCategories){
+            categories.add(budgetCategory.getCategory());
+        }
+        return categories;
     }
 }

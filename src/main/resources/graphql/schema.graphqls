@@ -119,6 +119,8 @@ type MonthsTotalsItem {
     month: MonthType!
     year: Int!
     amountSpent: Float!
+    amountSpentPlanned: Float!
+    amountSpentUnplanned: Float!
     amountBudgeted: Float!
 }
 

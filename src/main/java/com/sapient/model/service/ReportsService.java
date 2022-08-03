@@ -89,6 +89,7 @@ public class ReportsService {
         List<MonthsTotalsItem> byMonth = new ArrayList<>();
 
         HashMap<MonthYear, Double> totals = new HashMap<>();
+        HashMap<MonthYear, Double> totalsPlanned = new HashMap<>();
         List<MonthYear> months = new ArrayList<>();
 
         MonthYear first = getFirstMonth(user);
@@ -97,6 +98,7 @@ public class ReportsService {
 
         while(curr.compareTo(last) < 1){
             totals.put(curr, 0.0);
+            totalsPlanned.put(curr, 0.0);
             months.add(curr);
             curr = curr.nextMonth();
         }
@@ -108,10 +110,14 @@ public class ReportsService {
 
         for(MonthYear my: months){
             Double amountBudgeted = 0.0;
+            Double amountSpentPlanned = 0.0;
             try{
-                amountBudgeted = budgetService.getBudgetByDate(passwordHash, my.getMonth(), my.getYear()).getAmountBudgeted();
+                Budget budget = budgetService.getBudgetByDate(passwordHash, my.getMonth(), my.getYear());
+                amountBudgeted = budget.getAmountBudgeted();
+                amountSpentPlanned = budgetService.getAmountSpentPlanned(passwordHash, budget);
+
             }catch (Exception e){}
-            byMonth.add(new MonthsTotalsItem(my.getMonth(), my.getYear(), totals.get(my), amountBudgeted));
+            byMonth.add(new MonthsTotalsItem(my.getMonth(), my.getYear(), totals.get(my), amountBudgeted, amountSpentPlanned, totals.get(my) - amountSpentPlanned));
         }
         return new MonthsTotals(total/months.size(), byMonth);
     }

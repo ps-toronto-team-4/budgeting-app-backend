@@ -139,4 +139,16 @@ public class BudgetService {
         budgetCategoryDao.save(newBudgetCategory);
         return newBudgetCategory;
     }
+
+    protected Double getAmountSpentPlanned(String passwordHash, Budget budget) throws NotAuthorizedException{
+        Double amountSpentPlanned = 0.0;
+        List<Expense> expenses = expenseService.getExpensesInMonth(passwordHash, budget.getMonth(), budget.getYear());
+        List<Category> categories = budget.getCategories();
+        for(Expense expense: expenses){
+            if(categories.contains(expense.getCategory())){
+                amountSpentPlanned += expense.getAmount();
+            }
+        }
+        return amountSpentPlanned;
+    }
 }
