@@ -48,6 +48,7 @@ type Query {
     budgetCategory(passwordHash:String!, id:Int!): BudgetCategoryPayload!
     budgetCategories(passwordHash:String!): BudgetCategoriesPayload!
     budgetDetails(passwordHash: String!, id: Int!): BudgetDetailsPayload!
+    budgetDetailsByDate(passwordHash: String!, month: MonthType!, year: Int!): BudgetDetailsPayload!
 }
 
 type Expense {
