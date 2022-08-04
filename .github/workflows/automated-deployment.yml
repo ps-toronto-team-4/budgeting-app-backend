@@ -3,6 +3,7 @@ name: Automated Deployment
 on:
   push:
     branches: [ "develop" ]
+  workflow_dispatch:
 
 jobs:
 
